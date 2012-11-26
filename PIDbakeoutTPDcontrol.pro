@@ -2,7 +2,10 @@ SOURCES += \
     main.cpp \
     dialog335.cpp \
     dialogcombivac.cpp \
-    dialogrga.cpp
+    dialogrga.cpp \
+    serial.cpp \
+    serialrequest.cpp \
+    combivac.cpp
 INCLUDEPATH+=C:\\Qwt-6.0.1\\include
 
 LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib
@@ -14,4 +17,7 @@ QT += testlib
 HEADERS += \
     dialog335.h \
     dialogcombivac.h \
-    dialogrga.h
+    dialogrga.h \
+    serial.h \
+    serialrequest.h \
+    combivac.h

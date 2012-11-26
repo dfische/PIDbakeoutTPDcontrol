@@ -17,7 +17,7 @@ class GUI ;
 
 class dialogCombivac : public QWidget
 {
-    Q_Object
+    Q_OBJECT
 
 public:
     dialogCombivac();
