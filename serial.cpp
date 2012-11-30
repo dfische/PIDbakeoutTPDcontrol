@@ -1,12 +1,11 @@
 #include "serial.h"
 #include "serialrequest.h"
+#include <QTest>
 
 serial::serial(PortSettings Settings, QObject *parent)
-    : QextSerialPort(Settings,EventDriven, parent),
-      ok(true)
+    : QextSerialPort(Settings,EventDriven, parent)
 {
-   if (!init())
-       processError() ;
+   processError("not initialized") ;
    connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
 
 
@@ -20,46 +19,77 @@ void serial::enqueue(serialRequest *requestPointer)
 
 void serial::read()
 {
+    int bytes = bytesAvailable() ;
+    do
+    {
+        bytes = bytesAvailable() ;
+        QTest::qWait(10) ;
+    }
+    while (bytesAvailable() > bytes && !canReadLine()) ;
     QByteArray data = readAll() ;
-    while(!data.isEmpty())
+    while(!data.isEmpty() && !waiting.isEmpty())
     {
         serialRequest* request = waiting.dequeue() ;
-        if (!request->process(data))
+        QString D = request->process(data) ;
+        if (!D.isEmpty())
         {
             delete request ;
-            processError() ;
+            processError(D) ;
             return ;
         }
         delete request ;
     }
+
 }
 
 void serial::clearError()
 {
     if (!init())
-        processError() ;
-
+        processError("Initializing failed") ;
+    else ErrorString.clear() ;
 }
 
-void serial::processError()
+void serial::clearQueue()
 {
+    //Löschen der Objekte (Schleife) auf den der jeweilige Pointer gezeigt hat
+    foreach(serialRequest* Pointer, waiting)
+        delete Pointer ;
+    //Löschen der Schlange
     waiting.clear() ;
-    ok = false ;
-    emit Error() ;
 }
 
-deviceButton::deviceButton(serial *Device, QString Name,  QWidget *parent)
-    :QPushButton(Name, parent),
-      device(Device)
+void serial::processError(const QString & Es)
 {
-    connect(device, SIGNAL(Error()), this, SLOT(errorOccured())) ;
-    connect(this, SIGNAL(clicked()), this, SLOT(resetDevice())) ;
-
+    clearQueue() ;
+    ErrorString = Es ;
+    emit Error(Es) ;
 }
+
+serial::~serial()
+{
+    clearQueue();
+}
+
+deviceButton::deviceButton(QWidget *parent)
+    :QPushButton(parent),
+      device(0)
+{
+    connect(this, SIGNAL(clicked()), this, SLOT(resetDevice())) ;
+    setButtonColor(Qt::blue);
+}
+
+void deviceButton::setDevice(serial *dev)
+{
+    if (device)
+        disconnect(device, SIGNAL(Error(QString)), this, SLOT(errorOccured(QString))) ;
+    device = dev ;
+    connect(device, SIGNAL(Error(QString)), this, SLOT(errorOccured(QString))) ;
+}
+
 void deviceButton::setButtonColor(const QColor& Color)
 {
     QPalette pal = palette() ;
-    pal.setColor(QPalette::Background, Color) ;
+    pal.setColor(QPalette::ButtonText, Color) ;
     setPalette(pal) ;
 }
 
@@ -71,12 +101,12 @@ void deviceButton::resetDevice()
     device->clearError() ;
     if (device->isok())
         setButtonColor(Qt::green) ;
-
 }
 
-void deviceButton::errorOccured()
+void deviceButton::errorOccured(QString S)
 {
     setButtonColor(Qt::red);
+    setToolTip(S);
 }
 
 

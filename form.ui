@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
-    <height>959</height>
+    <width>816</width>
+    <height>919</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,20 +16,20 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>30</y>
+     <x>0</x>
+     <y>20</y>
      <width>771</width>
-     <height>871</height>
+     <height>881</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tabPID">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>PID</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -318,15 +318,15 @@
    </widget>
    <widget class="QWidget" name="tabBakeout">
     <attribute name="title">
-     <string>Tab 1</string>
+     <string>Bakeout</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>20</y>
+       <x>30</x>
+       <y>10</y>
        <width>158</width>
-       <height>31</height>
+       <height>54</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout_4">
@@ -342,44 +342,36 @@
       </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="stopPressureMeasurement">
+        <property name="toolTip">
+         <string>stop measurement</string>
+        </property>
         <property name="text">
          <string>Stop</string>
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>70</y>
-       <width>731</width>
-       <height>707</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QwtPlot" name="Pressure1"/>
-      </item>
-      <item>
-       <widget class="QwtPlot" name="Pressure2"/>
-      </item>
-      <item>
-       <widget class="QwtPlot" name="Pressure3"/>
+      <item row="1" column="1">
+       <widget class="deviceButton" name="resetDevice">
+        <property name="toolTip">
+         <string>testtooltip</string>
+        </property>
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>10</y>
-       <width>149</width>
-       <height>53</height>
+       <x>200</x>
+       <y>0</y>
+       <width>225</width>
+       <height>65</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayout_8">
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="label_22">
         <property name="text">
@@ -422,14 +414,103 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="combi1CheckBox">
+        <property name="text">
+         <string>CheckBox</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="combi2CheckBox">
+        <property name="text">
+         <string>CheckBox</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QCheckBox" name="ionGaugeCheckBox">
+        <property name="text">
+         <string>CheckBox</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>10</y>
+       <width>72</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="formLayout_9">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_25">
+        <property name="text">
+         <string>Time</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="pressureTimeInterval">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>741</width>
+       <height>761</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="trackingPlot" name="pressurePlot1">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="trackingPlot" name="pressurePlot2">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="trackingPlot" name="ionGaugePlot">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
    <widget class="QWidget" name="tabTPD">
     <attribute name="title">
-     <string>Page</string>
+     <string>TPD</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -462,7 +543,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -483,7 +564,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -525,7 +606,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>230</x>
@@ -567,7 +648,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -584,6 +665,18 @@
    <class>QwtPlot</class>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>deviceButton</class>
+   <extends>QPushButton</extends>
+   <header>serial.h</header>
+  </customwidget>
+  <customwidget>
+   <class>trackingPlot</class>
+   <extends>QFrame</extends>
+   <header>trackingplot.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

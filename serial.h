@@ -29,15 +29,16 @@ class serial : public QextSerialPort
 public:
     explicit serial(PortSettings, QObject* parent=0) ;
     void enqueue(serialRequest* requestPointer) ;
-    bool isok(){return ok;}
+    bool isok(){return ErrorString.isEmpty();}
+    ~serial() ;
 protected:
     virtual bool init()=0 ;
+    void processError(const QString &) ;
 
 private:
-    bool ok ;
+    QString ErrorString ;
     QQueue<serialRequest*> waiting ;
-    void processError() ;
-
+    void clearQueue() ;
 private slots:
     void read() ;
 
@@ -45,7 +46,7 @@ public slots:
     void clearError() ;
 
 signals:
-    void Error() ;
+    void Error(const QString &) ;
 
 };
 
@@ -55,13 +56,14 @@ class deviceButton : public QPushButton
     Q_OBJECT
 
 public:
-    deviceButton(serial* device, QString Name, QWidget *parent=0) ;
+    deviceButton(QWidget *parent=0) ;
+    void setDevice(serial* dev) ;
 private:
     serial* device ;
     void setButtonColor(const QColor & Color) ;
 private slots:
     void resetDevice() ;
-    void errorOccured() ;
+    void errorOccured(QString S) ;
 };
 
 #endif // SERIAL_H

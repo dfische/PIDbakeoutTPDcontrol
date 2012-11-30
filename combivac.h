@@ -2,6 +2,18 @@
 #define COMBIVAC_H
 
 #include "serial.h"
+#include "serialrequest.h"
+
+class pressureRequest : public serialRequest
+{
+    Q_OBJECT
+private:
+    int Channel ;
+public:
+    pressureRequest(int Channel = 1) ;
+    QByteArray request() ;
+    QString process(QByteArray &) ;
+};
 
 class combivac : public serial
 {

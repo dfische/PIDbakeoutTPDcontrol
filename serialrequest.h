@@ -1,15 +1,21 @@
 #ifndef SERIALREQUEST_H
 #define SERIALREQUEST_H
 #include <QByteArray>
+#include <QObject>
 
-class serialRequest
+class serialRequest : public QObject
 {
+    Q_OBJECT
 public:
     serialRequest();
     //generieren der Abfrage
     virtual QByteArray request()=0 ;
     //verarbeitet die Anfrage
-    virtual bool process(QByteArray&)=0 ;
+    virtual QString process(QByteArray&)=0 ;
+signals:
+    void numericvalue(double) ;
+
+
 };
 
 #endif // SERIALREQUEST_H
