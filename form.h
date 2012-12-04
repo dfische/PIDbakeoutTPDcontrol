@@ -5,7 +5,7 @@
 #include <QWidget>
 
 class combivac ;
-
+class dialog335 ;
 namespace Ui {
 class Form;
 }
@@ -21,11 +21,15 @@ public:
 private:
     Ui::Form *ui;
     combivac *cv ;
-    QTimer * timer ;
+    QTimer * bakeoutTimer ;
+    QTimer *PIDtimer ;
+    dialog335 *dl ;
 
 private slots:
-    void timerIntervalChanged(int) ;
-    void getValue() ;
+    void bakeoutTimerIntervalChanged(int) ;
+    void getBakeoutValue() ;
+    void PIDtimerIntervalChanged(int) ;
+    void getPIDValue() ;
 
 };
 

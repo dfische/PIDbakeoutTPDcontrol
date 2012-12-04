@@ -1,23 +1,48 @@
 #include "form.h"
 #include "ui_form.h"
 #include "combivac.h"
-
+#include "dialog335.h"
 Form::Form(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Form)
 {
     cv = new combivac(this) ;
+    dl = new dialog335(this) ;
     ui->setupUi(this);
     ui->resetDevice->setDevice(cv);
-    timer = new QTimer(this) ;
-    timerIntervalChanged(ui->pressureTimeInterval ->value());
-    connect(ui->pressureTimeInterval, SIGNAL(valueChanged(int)), this, SLOT(timerIntervalChanged(int))) ;
-    connect(ui->stopPressureMeasurement, SIGNAL(clicked()), timer, SLOT(stop())) ;
-    connect(ui->startPressureMeasurement, SIGNAL(clicked()), timer, SLOT(start())) ;
-    connect(timer, SIGNAL(timeout()), this, SLOT(getValue())) ;
+    ui->resetPID->setDevice(dl) ;
+    bakeoutTimer = new QTimer(this) ;
+    PIDtimer =new QTimer(this) ;
+    bakeoutTimerIntervalChanged(ui->pressureTimeInterval ->value());
+    PIDtimerIntervalChanged(ui->PIDtempSpinBox ->value()) ;
+
+    connect(ui->PIDtempSpinBox, SIGNAL(valueChanged(int)), this, SLOT(PIDtimerIntervalChanged(int))) ;
+    connect(ui->StartPID, SIGNAL(clicked()), PIDtimer, SLOT(start())) ;
+    connect(ui->StopPID, SIGNAL(clicked()), PIDtimer, SLOT(stop())) ;
+    connect(PIDtimer, SIGNAL(timeout()), this, SLOT(getPIDValue())) ;
+
+    connect(ui->pressureTimeInterval, SIGNAL(valueChanged(int)), this, SLOT(bakeoutTimerIntervalChanged(int))) ;
+    connect(ui->stopPressureMeasurement, SIGNAL(clicked()), bakeoutTimer, SLOT(stop())) ;
+    connect(ui->startPressureMeasurement, SIGNAL(clicked()), bakeoutTimer, SLOT(start())) ;
+    connect(bakeoutTimer, SIGNAL(timeout()), this, SLOT(getBakeoutValue())) ;
 }
 
-void Form::getValue()
+void Form::getPIDValue()
+{
+    temperatureRequest* a = new temperatureRequest('A') ;
+    temperatureRequest* b = new temperatureRequest('B') ;
+    connect(a, SIGNAL(numericvalue(double)), ui->tempValueA, SLOT(setNum(double))) ;
+    connect(b, SIGNAL(numericvalue(double)), ui->tempValueB, SLOT(setNum(double))) ;
+    dl->enqueue(a) ;
+    dl->enqueue(b) ;
+}
+
+void Form::PIDtimerIntervalChanged(int b)
+{
+    PIDtimer->setInterval((1000*b)) ;
+}
+
+void Form::getBakeoutValue()
 {
     pressureRequest * request =0 ;
 #define PRESSUREREQUESTMACRO(CHECKBOX, PRESSURECOMBI, NUMBER, PLOT) \
@@ -36,9 +61,10 @@ void Form::getValue()
 
 }
 
-void Form::timerIntervalChanged(int a)
+
+void Form::bakeoutTimerIntervalChanged(int a)
 {
-    timer->setInterval(1000*a);
+    bakeoutTimer->setInterval(1000*a);
 }
 
 Form::~Form()

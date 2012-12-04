@@ -34,6 +34,7 @@ public:
 protected:
     virtual bool init()=0 ;
     void processError(const QString &) ;
+    bool waitForReadyRead(int msecs) ;
 
 private:
     QString ErrorString ;

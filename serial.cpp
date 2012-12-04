@@ -69,6 +69,15 @@ serial::~serial()
 {
     clearQueue();
 }
+bool serial::waitForReadyRead(int msecs)
+{
+    QTime timeout ;
+    timeout.start();
+    while (!bytesAvailable() && timeout.elapsed() < msecs) ;
+    if (timeout.elapsed() >= msecs) return false ;
+    return true ;
+}
+
 
 deviceButton::deviceButton(QWidget *parent)
     :QPushButton(parent),

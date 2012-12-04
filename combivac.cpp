@@ -24,11 +24,8 @@ bool combivac::init()
     flush() ;
     //Fragen nach Gerätestatus
     write("RSA\r") ;
-    const int toValue = 1000 ;
-    QTime timeout ;
-    timeout.start();
-    while (!bytesAvailable() && timeout.elapsed() < toValue) ;
-    if (timeout.elapsed() >= toValue) return false ;
+    if (!waitForReadyRead(1000))
+        return false ;
     QByteArray ba = readAll() ;
     if (ba != "0") return false ;
     return true ;
