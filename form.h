@@ -31,6 +31,8 @@ private slots:
     void PIDtimerIntervalChanged(int) ;
     void getPIDValue() ;
 
+
+    void on_heaterRange1_currentIndexChanged(int index);
 };
 
 #endif // FORM_H

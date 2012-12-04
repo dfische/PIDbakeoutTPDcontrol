@@ -71,3 +71,10 @@ Form::~Form()
 {
     delete ui;
 }
+
+void Form::on_heaterRange1_currentIndexChanged(int index)
+{
+    setHeaterRange * a = new setHeaterRange(index, 1) ;
+    connect(a, SIGNAL(numericvalue(int)), ui->heaterRange1, SLOT(setCurrentIndex(int))) ;
+    dl->enqueue(a) ;
+}

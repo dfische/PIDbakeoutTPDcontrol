@@ -39,13 +39,13 @@
       </rect>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>11</x>
        <y>11</y>
        <width>711</width>
-       <height>209</height>
+       <height>220</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -65,7 +65,21 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2" rowspan="2">
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Temp. Channel B :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="tempValueB">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
          <widget class="QSpinBox" name="PIDtempSpinBox">
           <property name="minimum">
            <number>1</number>
@@ -73,16 +87,9 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_26">
           <property name="text">
-           <string>Temp. Channel B :</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="tempValueB">
-          <property name="text">
-           <string>TextLabel</string>
+           <string>Temp. Polling Interval</string>
           </property>
          </widget>
         </item>
@@ -131,9 +138,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="ResistanceA"/>
-          </item>
          </layout>
         </item>
         <item row="1" column="0">
@@ -145,22 +149,12 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="SetpointA">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>Heater Range</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="HeaterRangeA"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_7">
@@ -218,7 +212,53 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="heaterRange1">
+            <item>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="setpoint1"/>
+          </item>
          </layout>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="heaterOutput1Ohm">
+          <item>
+           <property name="text">
+            <string>25 Ohm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50 Ohm</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </item>
@@ -233,9 +273,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="ResistanceB"/>
-          </item>
          </layout>
         </item>
         <item row="1" column="0">
@@ -247,22 +284,12 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="SetpointB">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_11">
             <property name="text">
              <string>Heater Range</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="HeaterRangeB"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_16">
@@ -320,7 +347,48 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="heaterRange2">
+            <item>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>3</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="setpoint2"/>
+          </item>
          </layout>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="heaterOutput2Ohm">
+          <item>
+           <property name="text">
+            <string>25 Ohm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50 Ohm</string>
+           </property>
+          </item>
+         </widget>
         </item>
        </layout>
       </item>

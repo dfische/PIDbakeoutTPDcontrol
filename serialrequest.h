@@ -14,6 +14,7 @@ public:
     virtual QString process(QByteArray&)=0 ;
 signals:
     void numericvalue(double) ;
+    void numericvalue(int) ;
 
 
 };
