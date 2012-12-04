@@ -21,31 +21,50 @@ bool dialog335::init()
     QByteArray ba = readAll() ;
     if (ba != QByteArray("LSCI,MODEL335,335A0KE/#######,1.1\r\n"))
         return false ;
-    write("OUTMODE 1,1,1,0;OUTMODE 2,1,2,0\n") ;
+    write("OUTMODE 1,1,1,0; OUTMODE 2,1,2,0\n") ;
     return true ;
 
 }
 
+dialog335Request::dialog335Request(char ch)
+    : Channel(qBound('A',ch,'B'))
+{}
+
+char dialog335Request::channelNo() const
+{
+    return Channel - 'A' + '1' ;
+}
+
+char dialog335Request::channel() const
+{
+    return Channel ;
+}
+
 QByteArray dialog335Request::request()
 {
+    QString req(request335()) ;
     return QByteArray().append(request335() + "\n") ;
 }
 
 QString dialog335Request::process(QByteArray & processByteArray)
 {
-    // Evtl leading ";" loeschen.
     int pos = processByteArray.indexOf("\r\n") ;
     if (pos == -1)
         return "Wrong Answer from Device" ;
     QString leftPart = processByteArray.left(pos) ;
+    leftPart.remove(';') ;
     processByteArray = processByteArray.right(processByteArray.size() - pos - 2) ;
     return process335(leftPart) ;
 
 }
 
+temperatureRequest::temperatureRequest(char ch)
+    : dialog335Request(ch)
+{}
+
 QString temperatureRequest::request335()
 {
-    return "KRDG?" + QString(Channel) ;
+    return QString("KRDG?") + channel() ;
 }
 
 QString temperatureRequest::process335(QString &temperatureProcessArray)
@@ -55,7 +74,7 @@ QString temperatureRequest::process335(QString &temperatureProcessArray)
 }
 
 setHeaterRange::setHeaterRange(int rv, char ch)
-    : Channel(qBound('1', ch, '2')),
+    : dialog335Request(ch),
       rangeValue(qBound(0, rv, 3))
 {
 
@@ -63,12 +82,11 @@ setHeaterRange::setHeaterRange(int rv, char ch)
 
 QString setHeaterRange::request335()
 {
-    return "RANGE" + QString(Channel)
+    return QString("RANGE ") + channelNo()
             + ","
             + QString::number(rangeValue)
-            + "\nRANGE?"
-            + QString(Channel)
-            + "\n" ;
+            + "; RANGE?"
+            + channel();
 }
 
 QString setHeaterRange::process335(QString &heaterRangeArray)
@@ -77,3 +95,25 @@ QString setHeaterRange::process335(QString &heaterRangeArray)
     return "" ;
 }
 
+setpoint::setpoint(double sv, char ch)
+    : dialog335Request(ch),
+      setpointValue(qBound(0., sv, 500.))
+{
+
+}
+
+QString setpoint::request335()
+{
+    return QString("SETP ") + channelNo()
+            + ","
+            + QString::number(setpointValue)
+            + "; SETP? "
+            + channel();
+}
+
+QString setpoint::process335(QString & setpointArray)
+{
+    double a = setpointArray.toDouble() ;
+    emit numericvalue(a) ;
+    return "" ;
+}

@@ -32,7 +32,9 @@ private slots:
     void getPIDValue() ;
 
 
+
     void on_heaterRange1_currentIndexChanged(int index);
+    void on_setpoint1_valueChanged(double arg1);
 };
 
 #endif // FORM_H

@@ -62,6 +62,8 @@ void Form::getBakeoutValue()
 }
 
 
+
+
 void Form::bakeoutTimerIntervalChanged(int a)
 {
     bakeoutTimer->setInterval(1000*a);
@@ -76,5 +78,13 @@ void Form::on_heaterRange1_currentIndexChanged(int index)
 {
     setHeaterRange * a = new setHeaterRange(index, 1) ;
     connect(a, SIGNAL(numericvalue(int)), ui->heaterRange1, SLOT(setCurrentIndex(int))) ;
+    dl->enqueue(a) ;
+}
+
+void Form::on_setpoint1_valueChanged(double arg1)
+{
+    setpoint * a = new setpoint(arg1, 1) ;
+    connect(a, SIGNAL(numericvalue(double)), ui->setpoint1Label, SLOT(setNum(double))) ;
+    connect(a, SIGNAL(numericvalue(double)), ui->setpoint1, SLOT(setValue(double))) ;
     dl->enqueue(a) ;
 }

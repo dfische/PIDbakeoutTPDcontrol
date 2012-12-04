@@ -6,9 +6,14 @@
 class dialog335Request : public serialRequest
 {
     Q_OBJECT ;
+private:
+    char Channel ;
 protected:
+    dialog335Request(char ch) ;
     virtual QString request335() = 0 ;
     virtual QString process335(QString &) = 0 ;
+    char channelNo() const ;
+    char channel() const ;
 private:
     QByteArray request() ;
     QString process(QByteArray &) ;
@@ -18,14 +23,22 @@ private:
 class temperatureRequest : public dialog335Request
 {
     Q_OBJECT ;
-private:
-    char Channel ;
 public:
-    explicit temperatureRequest(char ch='A') : Channel(qBound('A', ch, 'B')) {}
+    explicit temperatureRequest(char ch='A');
     QString request335() ;
     QString process335(QString &) ;
 };
 
+class setpoint : public dialog335Request
+{
+private:
+    char Channel ;
+    double setpointValue ;
+public:
+    explicit setpoint(double sv = '300', char ch = '1') ;
+    QString request335() ;
+    QString process335(QString &) ;
+};
 
 class setHeaterRange : public dialog335Request
 {
