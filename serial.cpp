@@ -13,12 +13,18 @@ serial::serial(PortSettings Settings, QObject *parent)
 
 void serial::enqueue(serialRequest *requestPointer)
 {
-    write(requestPointer->request()) ;
+    // Only send, if nothing else is underway:
+    if (waiting.isEmpty())
+        write(requestPointer->request()) ;
     waiting.enqueue(requestPointer) ;
 }
 
+// INVARIANT for communication:  First item in queue has been sent and
+// is awaiting response.
+
 void serial::read()
 {
+    // wait for all bytes to arrive -- might not be necessary -> TODO: check!
     int bytes = bytesAvailable() ;
     do
     {
@@ -27,19 +33,22 @@ void serial::read()
     }
     while (bytesAvailable() > bytes && !canReadLine()) ;
     QByteArray data = readAll() ;
-    while(!data.isEmpty() && !waiting.isEmpty())
+    if (waiting.isEmpty())
     {
-        serialRequest* request = waiting.dequeue() ;
-        QString D = request->process(data) ;
-        if (!D.isEmpty())
-        {
-            delete request ;
-            processError(D) ;
-            return ;
-        }
-        delete request ;
+        // ooops, we got data, although not asked for:
+        processError("answer without request");
+        return ;
     }
+    // We have only sent the first request in the queue,
+    // so we only need to evaluate that one
+    serialRequest *currentRequest = waiting.dequeue() ;
+    QString error = currentRequest->process(data) ;
+    delete currentRequest ;
+    if (!error.isEmpty()) processError(error) ;
 
+    // if requests are pending, continue with the next in line:
+    if (!waiting.isEmpty())
+        write(waiting.head()->request()) ;
 }
 
 void serial::clearError()
