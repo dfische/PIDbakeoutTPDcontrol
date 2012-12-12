@@ -35,13 +35,13 @@ bool combivac::init()
 pressureRequest::pressureRequest(int channel) :
     Channel(qBound(1, channel, 3))
 {
-    qDebug() << "Konstruktor von" << this ;
+    qDebug() << "Konstruktor von" << this << "fuer Kanal" << Channel;
 }
 
 //Senden des Befehls (es gibt einen pointer von SerialRequest auf request !
 QByteArray pressureRequest::request()
 {
-    qDebug() << "Request" << this ;
+    qDebug() << "Request" << this << "Kanal:" << Channel;
 
     return QByteArray().append("RPV" + QString::number(Channel) + "\r") ;
 
@@ -50,8 +50,8 @@ QByteArray pressureRequest::request()
 //Verarbeitung der Daten
 QString pressureRequest::process(QByteArray & pressureProcessArray)
 {
-    qDebug() << "Process" << this ;
-
+    qDebug() << "Process" << this << "Kanal:" << Channel ;
+// TODO Manchmal kommen Antworten, die noch ein "\r" am Anfang haben.
     int pos = pressureProcessArray.indexOf("\r") ;
     if (pos == -1) return "No termination character" ;
     QString ppa(pressureProcessArray.left(pos)) ;

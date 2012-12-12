@@ -11,7 +11,9 @@
 
 trackingPlot::trackingPlot(QWidget *parent) :
     QwtPlot(parent),
-    zoomer(0)
+    curve(0),
+    zoomer(0),
+    contextMenu(0)
 {
     xValue.start() ;
     curve = new QwtPlotCurve ;
@@ -65,6 +67,7 @@ void trackingPlot::resetPlot()
 {
     data.clear() ;
     xValue.restart() ;
+    zoomer->setZoomBase(QRectF());
     refresh() ;
 }
 

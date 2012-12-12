@@ -8,7 +8,7 @@ dialog335::dialog335(QObject *parent) :
                           FLOW_OFF,
                           -1), parent)
 {
-    setPortName("COM4") ;
+    setPortName("COM7") ;
     open(ReadWrite) ;
 }
 

@@ -35,7 +35,7 @@ private:
     char Channel ;
     double setpointValue ;
 public:
-    explicit setpoint(double sv = '300', char ch = '1') ;
+    explicit setpoint(double sv = 300, char ch = '1') ;
     QString request335() ;
     QString process335(QString &) ;
 };
