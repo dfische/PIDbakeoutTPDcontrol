@@ -3,3 +3,4 @@ debug/
 release/
 object_script*
 *.pro.user*
+ui_*
