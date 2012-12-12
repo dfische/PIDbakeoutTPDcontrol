@@ -8,7 +8,7 @@ dialog335::dialog335(QObject *parent) :
                           FLOW_OFF,
                           -1), parent)
 {
-    setPortName("COM7") ;
+    setPortName("COM4") ;
     open(ReadWrite) ;
 }
 
@@ -95,19 +95,15 @@ QString setHeaterRange::process335(QString &heaterRangeArray)
     return "" ;
 }
 
-setpoint::setpoint(double sv, char ch)
-    : dialog335Request(ch),
-      setpointValue(qBound(0., sv, 500.))
+setpoint::setpoint(char ch)
+    : dialog335Request(ch)
 {
 
 }
 
 QString setpoint::request335()
 {
-    return QString("SETP ") + channelNo()
-            + ","
-            + QString::number(setpointValue)
-            + "; SETP? "
+    return QString("SETP?")
             + channel();
 }
 
@@ -117,3 +113,20 @@ QString setpoint::process335(QString & setpointArray)
     emit numericvalue(a) ;
     return "" ;
 }
+
+setSetpoint :: setSetpoint(double sv, char ch)
+    : setpoint(ch),
+      setpointValue(qBound(0., sv, 500.))
+{
+
+}
+
+QString setSetpoint::request335()
+{
+    return QString("SETP ") + channelNo()
+            + ","
+            + QString::number(setpointValue)
+            + "; "
+            + setpoint::request335() ;
+}
+

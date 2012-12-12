@@ -33,11 +33,21 @@ class setpoint : public dialog335Request
 {
 private:
     char Channel ;
-    double setpointValue ;
+
 public:
-    explicit setpoint(double sv = 300, char ch = '1') ;
+    explicit setpoint( char ch = '1') ;
     QString request335() ;
     QString process335(QString &) ;
+};
+
+class setSetpoint : public setpoint
+{
+public:
+    explicit setSetpoint(double sv = 300, char ch = '1') ;
+    QString request335() ;
+
+private:
+    double setpointValue ;
 };
 
 class setHeaterRange : public dialog335Request
