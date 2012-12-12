@@ -1,5 +1,5 @@
 #include "dialog335.h"
-
+#include <QTest>
 dialog335::dialog335(QObject *parent) :
     serial(serialSettings(BAUD57600,
                           DATA_7,
@@ -48,6 +48,7 @@ QByteArray dialog335Request::request()
 
 QString dialog335Request::process(QByteArray & processByteArray)
 {
+    QTest::qWait(50) ;
     int pos = processByteArray.indexOf("\r\n") ;
     if (pos == -1)
         return "Wrong Answer from Device" ;
