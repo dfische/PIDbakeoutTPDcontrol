@@ -10,7 +10,7 @@ combivac::combivac(QObject *parent) :
                           FLOW_OFF,
                           -1),parent)
 {
-    setPortName("COM7") ;
+    setPortName("COM8") ;
     open(ReadWrite) ;
 }
 
