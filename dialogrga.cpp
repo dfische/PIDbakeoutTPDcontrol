@@ -96,7 +96,7 @@ QString filamentRequest::processRGA(QString &s)
 {
     if (s == "1")
     {
-        emit state(s == "1")  ;
+        emit state(filament)  ;
     }
     else
     {
@@ -113,7 +113,7 @@ CDEMRequest::CDEMRequest(bool a)
 
 QString CDEMRequest::requestRGA()
 {
-    return QString("HV") + (CDEM ? QString("*") : QString("0")) ; // + QString("NF7") + QString("CA") ;
+    return QString("HV") + (CDEM ? QString("*") : QString("0")) ;//+ QString("NF7") + QString("CA") ;
 }
 
 QString CDEMRequest::processRGA(QString & b)
