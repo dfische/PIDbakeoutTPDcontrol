@@ -3,7 +3,8 @@
 #include <QTest>
 
 serial::serial(PortSettings Settings, QObject *parent)
-    : QextSerialPort(Settings,EventDriven, parent)
+    : QextSerialPort(Settings,EventDriven, parent),
+      ignoreNext(false)
 {
    processError("not initialized") ;
    connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
@@ -13,6 +14,8 @@ serial::serial(PortSettings Settings, QObject *parent)
 
 void serial::enqueue(serialRequest *requestPointer)
 {
+    requestPointer->setParent(this) ;
+    if (!isok()) return ;
     // Only send, if nothing else is underway:
     if (waiting.isEmpty())
         write(requestPointer->request()) ;
@@ -33,22 +36,36 @@ void serial::read()
     }
     while (bytesAvailable() > bytes && !canReadLine()) ;
     QByteArray data = readAll() ;
-    if (waiting.isEmpty())
+    serialRequest *currentRequest = 0 ;
+    if (!ignoreNext)
     {
-        // ooops, we got data, although not asked for:
-        processError("answer without request");
-        return ;
-    }
-    // We have only sent the first request in the queue,
-    // so we only need to evaluate that one
-    serialRequest *currentRequest = waiting.dequeue() ;
-    QString error = currentRequest->process(data) ;
-    delete currentRequest ;
-    if (!error.isEmpty()) processError(error) ;
+        if (waiting.isEmpty())
+        {
+            // ooops, we got data, although not asked for:
+            processError("answer without request");
+            return ;
+        }
+        // We have only sent the first request in the queue,
+        // so we only need to evaluate that one
+        currentRequest = waiting.dequeue() ;
+        processError(currentRequest->process(data)) ;
 
+        if (currentRequest->singleUse()) delete currentRequest ;
+        else enqueue(currentRequest);
+    }
     // if requests are pending, continue with the next in line:
-    if (!waiting.isEmpty())
+    if (!waiting.isEmpty() && waiting.head() != currentRequest)
         write(waiting.head()->request()) ;
+}
+
+void serial::childEvent(QChildEvent *e)
+{
+    QextSerialPort::childEvent(e) ;
+    serialRequest *r = qobject_cast<serialRequest*>(e) ;
+    if (!r || !e->removed()) return ;
+    e->accept();
+    ignoreNext = (waiting.head() == r) ;
+    waiting.removeAll(r) ;
 }
 
 void serial::clearError()
@@ -56,28 +73,27 @@ void serial::clearError()
     if (!init())
         processError("Initializing failed") ;
     else ErrorString.clear() ;
+    // rebuild queue:
+    buildQueue();
 }
 
 void serial::clearQueue()
 {
-    //Löschen der Objekte (Schleife) auf den der jeweilige Pointer gezeigt hat
-    foreach(serialRequest* Pointer, waiting)
-        delete Pointer ;
-    //Löschen der Schlange
     waiting.clear() ;
+}
+
+void serial::buildQueue()
+{
+    waiting << findChildren<serialRequest*>() ;
 }
 
 void serial::processError(const QString & Es)
 {
     clearQueue() ;
     ErrorString = Es ;
-    emit Error(Es) ;
+    if (!Es.isEmpty()) emit Error(Es) ;
 }
 
-serial::~serial()
-{
-    clearQueue();
-}
 bool serial::waitForReadyRead(int msecs)
 {
     QTime timeout ;

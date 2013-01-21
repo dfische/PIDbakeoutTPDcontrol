@@ -30,7 +30,6 @@ public:
     explicit serial(PortSettings, QObject* parent=0) ;
     void enqueue(serialRequest* requestPointer) ;
     bool isok(){return ErrorString.isEmpty();}
-    ~serial() ;
 protected:
     virtual bool init()=0 ;
     void processError(const QString &) ;
@@ -39,7 +38,10 @@ protected:
 private:
     QString ErrorString ;
     QQueue<serialRequest*> waiting ;
+    bool ignoreNext ;
     void clearQueue() ;
+    void buildQueue() ;
+    void childEvent(QChildEvent*) ;
 private slots:
     void read() ;
 
