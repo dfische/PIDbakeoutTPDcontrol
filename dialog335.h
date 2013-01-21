@@ -29,13 +29,22 @@ public:
     QString process335(QString &) ;
 };
 
+class heaterOutputRequest : public dialog335Request
+{
+    Q_OBJECT ;
+public:
+    explicit heaterOutputRequest(char ch='A') ;
+    QString request335() ;
+    QString process335(QString &) ;
+} ;
+
 class setpoint : public dialog335Request
 {
 private:
     char Channel ;
 
 public:
-    explicit setpoint( char ch = '1') ;
+    explicit setpoint( char ch = 'A') ;
     QString request335() ;
     QString process335(QString &) ;
 };
@@ -43,7 +52,7 @@ public:
 class setSetpoint : public setpoint
 {
 public:
-    explicit setSetpoint(double sv = 300, char ch = '1') ;
+    explicit setSetpoint(double sv = 300, char ch = 'A') ;
     QString request335() ;
 
 private:
@@ -56,9 +65,29 @@ private:
     char Channel ;
     int rangeValue ;
 public:
-    explicit setHeaterRange(int rv = 0 ,char ch = '1') ;
+    explicit setHeaterRange(int rv = 0 ,char ch = 'A') ;
     QString request335() ;
     QString process335(QString &) ;
+};
+
+class setPID : public dialog335Request
+{
+    Q_OBJECT
+private:
+    char Channel ;
+    double pVal ;
+    double iVal ;
+    double dVal ;
+public:
+    explicit setPID(char ch = 'A', double pV = 100, double iV = 50, double dV = 0) ;
+    QString request335() ;
+    QString process335(QString &) ;
+signals:
+    void pValue(double) ;
+    void iValue(double) ;
+    void dValue(double) ;
+
+
 };
 
 class dialog335 : public serial

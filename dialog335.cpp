@@ -48,7 +48,7 @@ QByteArray dialog335Request::request()
 
 QString dialog335Request::process(QByteArray & processByteArray)
 {
-    QTest::qWait(50) ;
+    QTest::qWait(100) ;
     int pos = processByteArray.indexOf("\r\n") ;
     if (pos == -1)
         return "Wrong Answer from Device" ;
@@ -74,6 +74,22 @@ QString temperatureRequest::process335(QString &temperatureProcessArray)
     return "" ;
 }
 
+heaterOutputRequest::heaterOutputRequest(char ch)
+    :dialog335Request(ch)
+{
+
+}
+QString heaterOutputRequest::request335()
+{
+    return QString("HTR?") + channelNo() ;
+}
+
+QString heaterOutputRequest::process335(QString & heaterOutputRequestArray)
+{
+    emit numericvalue(heaterOutputRequestArray.toDouble()) ;
+    return "" ;
+}
+
 setHeaterRange::setHeaterRange(int rv, char ch)
     : dialog335Request(ch),
       rangeValue(qBound(0, rv, 3))
@@ -87,12 +103,43 @@ QString setHeaterRange::request335()
             + ","
             + QString::number(rangeValue)
             + "; RANGE?"
-            + channel();
+            + channel() ;
 }
 
 QString setHeaterRange::process335(QString &heaterRangeArray)
 {
     emit numericvalue(heaterRangeArray.toInt()) ;
+    return "" ;
+}
+
+setPID::setPID(char ch, double pV, double iV, double dV)
+    :dialog335Request(ch) ,
+    pVal(qBound(0., pV, 1000.)) ,
+    iVal(qBound(0., iV, 1000.)) ,
+    dVal(qBound(0., dV, 200.))
+{
+
+}
+
+QString setPID::request335()
+{
+    return QString("PID ") + channelNo()
+            + ","
+            + QString::number(pVal) + ","
+            + QString::number(iVal) + ","
+            + QString::number(dVal) + ","
+            + "; PID?"
+            + channelNo() ;
+}
+
+QString setPID::process335(QString &setPIDArray)
+{
+    QStringList list = setPIDArray.split(",") ;
+    if (list.size() < 3)
+        return "PID read error" ;
+    emit pValue(list[0].toDouble()) ;
+    emit iValue(list[1].toDouble()) ;
+    emit dValue(list[2].toDouble()) ;
     return "" ;
 }
 
@@ -105,7 +152,7 @@ setpoint::setpoint(char ch)
 QString setpoint::request335()
 {
     return QString("SETP?")
-            + channel();
+            + channelNo() ;
 }
 
 QString setpoint::process335(QString & setpointArray)
