@@ -18,8 +18,8 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>771</width>
-     <height>881</height>
+     <width>751</width>
+     <height>861</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -664,46 +664,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>620</x>
-       <y>80</y>
-       <width>136</width>
-       <height>34</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout_7">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_20">
-        <property name="text">
-         <string>Temperature 335</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="temperature335">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_21">
-        <property name="text">
-         <string>Thermocouple</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="temperatureThermocouple">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="deviceButton" name="resetRGA">
      <property name="geometry">
       <rect>
@@ -717,7 +677,7 @@
       <string>Reset</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="CDEMButton" name="startCDEM">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -727,14 +687,14 @@
       </rect>
      </property>
      <property name="text">
-      <string>Calibration</string>
+      <string>CDEM</string>
      </property>
     </widget>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>650</x>
-       <y>0</y>
+       <x>180</x>
+       <y>10</y>
        <width>102</width>
        <height>74</height>
       </rect>
@@ -805,35 +765,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>10</y>
-       <width>134</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_27">
-        <property name="text">
-         <string>Noise Floor (0-7)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="noiseFloorSpinBox">
-        <property name="maximum">
-         <number>7</number>
-        </property>
-        <property name="value">
-         <number>4</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="timerButton" name="startTPD">
      <property name="geometry">
       <rect>
@@ -860,38 +791,6 @@
       <string>Save</string>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>40</y>
-       <width>135</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_28">
-        <property name="text">
-         <string>CDEM Voltage</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="CDEMVoltage">
-        <property name="minimum">
-         <double>10.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>2490.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>1400.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="filamentButton" name="startFilament">
      <property name="geometry">
       <rect>
@@ -902,11 +801,65 @@
       </rect>
      </property>
      <property name="text">
-      <string>Filament On</string>
+      <string>Filament</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
      </property>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>10</y>
+       <width>152</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>Temperature 335:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="temperature335">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>K</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Thermocouple:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="temperatureThermocouple">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>K</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>
@@ -949,6 +902,11 @@
    <class>filamentButton</class>
    <extends>QPushButton</extends>
    <header>filamentbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CDEMButton</class>
+   <extends>QPushButton</extends>
+   <header>cdembutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

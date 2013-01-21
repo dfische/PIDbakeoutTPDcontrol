@@ -11,7 +11,8 @@ SOURCES += \
     speczoomer.cpp \
     dialog335.cpp \
     timerbutton.cpp \
-    filamentbutton.cpp
+    filamentbutton.cpp \
+    cdembutton.cpp
 INCLUDEPATH+=C:\\Qwt-6.0.1\\include
 
 LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib
@@ -30,7 +31,8 @@ HEADERS += \
     speczoomer.h \
     dialog335.h \
     timerbutton.h \
-    filamentbutton.h
+    filamentbutton.h \
+    cdembutton.h
 
 FORMS += \
     form.ui
