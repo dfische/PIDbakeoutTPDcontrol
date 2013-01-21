@@ -6,6 +6,7 @@
 
 class combivac ;
 class dialog335 ;
+class dialogRGA ;
 namespace Ui {
 class Form;
 }
@@ -23,18 +24,22 @@ private:
     combivac *cv ;
     QTimer * bakeoutTimer ;
     QTimer *PIDtimer ;
+
     dialog335 *dl ;
+    dialogRGA *rg ;
 
 private slots:
     void bakeoutTimerIntervalChanged(int) ;
-    void getBakeoutValue() ;
+    void getBakeoutValue() ;   // void getTemperatureValue() ;
     void PIDtimerIntervalChanged(int) ;
     void getPIDValue() ;
-
-
-
     void on_heaterRange1_currentIndexChanged(int index);
     void on_setpoint1_valueChanged(double arg1);
+    void on_setpoint2_valueChanged(double arg1);
+    void on_heaterRange2_currentIndexChanged(int index);
+    void pidValueChanged1() ;
+    void pidValueChanged2() ;
+    void getMassValue() ;
 };
 
 #endif // FORM_H

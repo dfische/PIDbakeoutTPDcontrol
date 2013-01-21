@@ -17,13 +17,13 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>0</y>
      <width>771</width>
      <height>881</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tabPID">
     <attribute name="title">
@@ -51,7 +51,7 @@
         <item row="0" column="1">
          <widget class="QLabel" name="tempValueA">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Temperature A</string>
           </property>
          </widget>
         </item>
@@ -79,7 +79,21 @@
         <item row="4" column="1">
          <widget class="QLabel" name="tempValueB">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Temperature B</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QCheckBox" name="plotTemperatureB">
+          <property name="text">
+           <string>Plot Temperature B</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="plotTemperatureA">
+          <property name="text">
+           <string>Plot Temperature A</string>
           </property>
          </widget>
         </item>
@@ -160,7 +174,7 @@
         <item row="1" column="2">
          <widget class="QLabel" name="setpoint1Label">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Setpoint</string>
           </property>
          </widget>
         </item>
@@ -175,36 +189,24 @@
          <widget class="QComboBox" name="heaterRange1">
           <item>
            <property name="text">
-            <string>0</string>
+            <string>Off</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>1</string>
+            <string>Low</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>2</string>
+            <string>Medium</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>3</string>
+            <string>High</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>4</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLabel" name="label_28">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -215,9 +217,9 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLabel" name="HeaterOutputA">
+         <widget class="QLabel" name="HeaterOutput1">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Output %</string>
           </property>
          </widget>
         </item>
@@ -228,17 +230,10 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="ProportionaA">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
         <item row="4" column="2">
-         <widget class="QLabel" name="label_29">
+         <widget class="QLabel" name="pValue1">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Proportional</string>
           </property>
          </widget>
         </item>
@@ -249,17 +244,10 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QLabel" name="IntegralA">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
         <item row="5" column="2">
-         <widget class="QLabel" name="label_30">
+         <widget class="QLabel" name="iValue1">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Integral</string>
           </property>
          </widget>
         </item>
@@ -270,17 +258,31 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <widget class="QLabel" name="DerivativeA">
+        <item row="6" column="2">
+         <widget class="QLabel" name="dValue1">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Derivate</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="2">
-         <widget class="QLabel" name="label_31">
-          <property name="text">
-           <string>TextLabel</string>
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="pSpin1">
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QSpinBox" name="iSpin1">
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QSpinBox" name="dSpin1">
+          <property name="maximum">
+           <number>200</number>
           </property>
          </widget>
         </item>
@@ -317,7 +319,11 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="setpoint2"/>
+         <widget class="QDoubleSpinBox" name="setpoint2">
+          <property name="maximum">
+           <double>500.000000000000000</double>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_11">
@@ -330,22 +336,22 @@
          <widget class="QComboBox" name="heaterRange2">
           <item>
            <property name="text">
-            <string>0</string>
+            <string>Off</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>1</string>
+            <string>Low</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>2</string>
+            <string>Medium</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>3</string>
+            <string>High</string>
            </property>
           </item>
          </widget>
@@ -358,9 +364,9 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLabel" name="HeaterOutputB">
+         <widget class="QLabel" name="HeaterOutput2">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Output %</string>
           </property>
          </widget>
         </item>
@@ -371,24 +377,10 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="ProportionalB">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_14">
           <property name="text">
            <string>Integral</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLabel" name="IntegralB">
-          <property name="text">
-           <string>TextLabel</string>
           </property>
          </widget>
         </item>
@@ -399,10 +391,40 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <widget class="QLabel" name="DerivativeB">
+        <item row="1" column="2">
+         <widget class="QLabel" name="setpoint2Label">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Setpoint</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="pSpin2"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QSpinBox" name="iSpin2"/>
+        </item>
+        <item row="6" column="1">
+         <widget class="QSpinBox" name="dSpin2"/>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLabel" name="pValue2">
+          <property name="text">
+           <string>Proportional</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QLabel" name="iValue2">
+          <property name="text">
+           <string>Integral</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QLabel" name="dValue2">
+          <property name="text">
+           <string>Derivate</string>
           </property>
          </widget>
         </item>
@@ -625,39 +647,6 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
-       <width>77</width>
-       <height>83</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QPushButton" name="startTPD">
-        <property name="text">
-         <string>Start</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="stopPID">
-        <property name="text">
-         <string>Stop</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="savePID">
-        <property name="text">
-         <string>Save</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
        <y>120</y>
        <width>721</width>
        <height>707</height>
@@ -665,63 +654,21 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QwtPlot" name="TPDmass1"/>
+       <widget class="trackingPlot" name="TPDmass1Plot"/>
       </item>
       <item>
-       <widget class="QwtPlot" name="TPDmass2"/>
+       <widget class="trackingPlot" name="TPDmass2Plot"/>
       </item>
       <item>
-       <widget class="QwtPlot" name="TPDmass3"/>
+       <widget class="trackingPlot" name="TPDmass3Plot"/>
       </item>
      </layout>
     </widget>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>120</x>
-       <y>10</y>
-       <width>83</width>
-       <height>74</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout_6">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_17">
-        <property name="text">
-         <string>Mass 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="TPDMass1"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string>Mass 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="TPDMass2"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_19">
-        <property name="text">
-         <string>Mass 3</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="TPDMass3"/>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>20</y>
+       <x>620</x>
+       <y>80</y>
        <width>136</width>
        <height>34</height>
       </rect>
@@ -757,6 +704,210 @@
       </item>
      </layout>
     </widget>
+    <widget class="deviceButton" name="resetRGA">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>10</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>70</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Calibration</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>0</y>
+       <width>102</width>
+       <height>74</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="mass1CheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="mass1Label">
+        <property name="text">
+         <string>Mass 1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="TPDMass1">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="mass2CheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="mass2Label">
+        <property name="text">
+         <string>Mass 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QSpinBox" name="TPDMass2">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="mass3CheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="mass3Label">
+        <property name="text">
+         <string>Mass 3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="TPDMass3">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>10</y>
+       <width>134</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_27">
+        <property name="text">
+         <string>Noise Floor (0-7)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="noiseFloorSpinBox">
+        <property name="maximum">
+         <number>7</number>
+        </property>
+        <property name="value">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="timerButton" name="startTPD">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>11</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveTPD">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>69</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>40</y>
+       <width>135</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_28">
+        <property name="text">
+         <string>CDEM Voltage</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="CDEMVoltage">
+        <property name="minimum">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>2490.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1400.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="filamentButton" name="startFilament">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>40</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Filament On</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QWidget" name="layoutWidget">
@@ -788,6 +939,16 @@
    <extends>QFrame</extends>
    <header>trackingplot.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>timerButton</class>
+   <extends>QPushButton</extends>
+   <header>timerbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>filamentButton</class>
+   <extends>QPushButton</extends>
+   <header>filamentbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

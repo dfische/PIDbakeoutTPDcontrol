@@ -9,7 +9,9 @@ SOURCES += \
     form.cpp \
     trackingplot.cpp \
     speczoomer.cpp \
-    dialog335.cpp
+    dialog335.cpp \
+    timerbutton.cpp \
+    filamentbutton.cpp
 INCLUDEPATH+=C:\\Qwt-6.0.1\\include
 
 LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib
@@ -26,7 +28,9 @@ HEADERS += \
     form.h \
     trackingplot.h \
     speczoomer.h \
-    dialog335.h
+    dialog335.h \
+    timerbutton.h \
+    filamentbutton.h
 
 FORMS += \
     form.ui
