@@ -14,6 +14,7 @@ serial::serial(PortSettings Settings, QObject *parent)
 
 void serial::enqueue(serialRequest *requestPointer)
 {
+    if (requestPointer->parent() == this && waiting.contains(requestPointer)) return ;
     requestPointer->setParent(this) ;
     if (!isok()) return ;
     // Only send, if nothing else is underway:
