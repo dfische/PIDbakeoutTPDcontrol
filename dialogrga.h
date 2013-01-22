@@ -37,6 +37,7 @@ public:
     singleMassRequest(int Ma) ;
 private:
     int Mass ;
+    QString process(QByteArray &) ;
 protected:
     int mass() const ;
 };

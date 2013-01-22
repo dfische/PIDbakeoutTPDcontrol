@@ -63,12 +63,19 @@ int singleMassRequest::mass() const
 QString singleMassRequest::requestRGA()
 {
 
-    return QString ("MR") + mass() ;
+    return QString ("MR") + QString::number(mass()) ;
 }
 
-QString singleMassRequest::processRGA(QString &massProcessArray)
+QString singleMassRequest::process(QByteArray &massProcessArray)
 {
-    emit numericvalue(massProcessArray.toDouble()) ;
+    if (massProcessArray.size() != 4)
+        return "Communication Error" ;
+    emit numericvalue(*((qint32 *)massProcessArray.data())*5.95E-13) ;
+    return "" ;
+}
+
+QString singleMassRequest::processRGA(QString &)
+{
     return "" ;
 }
 
