@@ -79,6 +79,14 @@ void trackingPlot::addValue(double yValue)
     refresh() ;
 }
 
+//void trackingPlot::addmassValue(double massValue, double tempValue)
+//{
+//    data += QPointF(massValue, tempValue) ;
+//    refresh ;
+
+//}
+
+
  trackingPlot::~trackingPlot()
  {
      delete zoomer ;

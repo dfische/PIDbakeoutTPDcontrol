@@ -88,8 +88,6 @@ void Form::PIDtimerIntervalChanged(int b)
 {
     PIDtimer->setInterval((1000*b)) ;
 }
-
-
 void Form::getBakeoutValue()
 {
     pressureRequest * request =0 ;
