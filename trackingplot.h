@@ -4,26 +4,24 @@
 #include <QPointF>
 #include <QVector>
 #include <QTime>
-#include <speczoomer.h>
-
 
 class QMenu ;
 class QwtPlotCurve ;
+class specZoomer ;
 
 class trackingPlot : public QwtPlot
 {
     Q_OBJECT
 public:
     explicit trackingPlot(QWidget *parent = 0);
-    ~trackingPlot() ;
 private:
     QVector<QPointF> data ;
     QTime xValue ;
     QwtPlotCurve *curve ;
-    specZoomer *zoomer ;
     void contextMenuEvent(QContextMenuEvent *) ;
     QMenu *contextMenu ;
     void refresh() ;
+    specZoomer *getZoomer() ;
 signals:
 private slots:
     void resetPlot() ;
