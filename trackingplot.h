@@ -29,7 +29,7 @@ private slots:
 
 public slots:
     void addValue(double yValue) ;
-    void addmassValue(double , double) ;
+   // void addmassValue(double , double) ;
 };
 
 #endif // TRACKINGPLOT_H

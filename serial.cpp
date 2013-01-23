@@ -62,7 +62,7 @@ void serial::read()
 void serial::childEvent(QChildEvent *e)
 {
     QextSerialPort::childEvent(e) ;
-    serialRequest *r = qobject_cast<serialRequest*>(e) ;
+    serialRequest *r = qobject_cast<serialRequest*>(e->child()) ;
     if (!r || !e->removed()) return ;
     e->accept();
     ignoreNext = (waiting.head() == r) ;
