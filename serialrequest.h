@@ -18,6 +18,7 @@ public:
 signals:
     void numericvalue(double) ;
     void numericvalue(int) ;
+    void state(bool) ;
 
 
 };

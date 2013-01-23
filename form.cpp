@@ -12,6 +12,8 @@ Form::Form(QWidget *parent) :
     dl = new dialog335(this) ;
     rg = new dialogRGA(this) ;
     ui->setupUi(this);
+    ui->startFilament->setRGA(rg) ;
+    ui->startCDEM->setRGA(rg) ;
     ui->resetDevice->setDevice(cv);
     ui->resetPID->setDevice(dl) ;
     ui->resetRGA->setDevice(rg) ;
@@ -23,10 +25,8 @@ Form::Form(QWidget *parent) :
 
 
     ui->startTPD->setTimerInterval(1);
-    ui->startFilament->setFilamentTimerInteval(1) ;
 
     connect(ui->startTPD, SIGNAL(timeout()), this, SLOT(getMassValue())) ;
-
 
 
     connect(ui->PIDtempSpinBox, SIGNAL(valueChanged(int)), this, SLOT(PIDtimerIntervalChanged(int))) ;
@@ -53,6 +53,8 @@ void Form::getPIDValue()
     temperatureRequest* temperature2 = new temperatureRequest('B') ;
     connect(temperature1, SIGNAL(numericvalue(double)), ui->tempValueA, SLOT(setNum(double))) ;
     connect(temperature2, SIGNAL(numericvalue(double)), ui->tempValueB, SLOT(setNum(double))) ;
+    connect(temperature1, SIGNAL(numericvalue(double)), ui->temperature335, SLOT(setNum(double))) ;
+    connect(temperature2, SIGNAL(numericvalue(double)), ui->temperatureThermocouple, SLOT(setNum(double))) ;
     heaterOutputRequest* heaterOutput1 = new heaterOutputRequest('1') ;
     heaterOutputRequest* heaterOutput2 = new heaterOutputRequest('2') ;
     connect(heaterOutput1, SIGNAL(numericvalue(double)), ui->HeaterOutput1, SLOT(setNum(double))) ;

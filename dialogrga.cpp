@@ -44,7 +44,6 @@ QString dialogRGARequest::process(QByteArray & processByteArray)
     if (pos == -1)
         return "Wrong Answer from Device" ;
     QString leftPart = processByteArray.left(pos) ;
-    leftPart.remove(';') ;
     processByteArray = processByteArray.right(processByteArray.size() - pos - 2) ;
     return processRGA(leftPart) ;
 
@@ -64,12 +63,19 @@ int singleMassRequest::mass() const
 QString singleMassRequest::requestRGA()
 {
 
-    return QString ("MR") + mass() ;
+    return QString ("MR") + QString::number(mass()) ;
 }
 
-QString singleMassRequest::processRGA(QString &massProcessArray)
+QString singleMassRequest::process(QByteArray &massProcessArray)
 {
-    emit numericvalue(massProcessArray.toDouble()) ;
+    if (massProcessArray.size() != 4)
+        return "Communication Error" ;
+    emit numericvalue(*((qint32 *)massProcessArray.data())*5.95E-13) ;
+    return "" ;
+}
+
+QString singleMassRequest::processRGA(QString &)
+{
     return "" ;
 }
 
@@ -82,24 +88,50 @@ QString singleMassRequest::processRGA(QString &massProcessArray)
 
 //}
 
-QString startFilament::requestRGA()
+filamentRequest::filamentRequest(bool a)
+    : filament(a)
 {
-    return QString ("FL*") ;
+
 }
 
-QString startFilament::processRGA(QString &)
+QString filamentRequest::requestRGA()
 {
-//    QStringList list = filamentArray.split();
+    return QString("FL") + (filament ? QString("*") : QString("0")) ;
+}
+
+QString filamentRequest::processRGA(QString &s)
+{
+    if (s == "1")
+    {
+        emit state(filament)  ;
+    }
+    else
+    {
+        return "Filament Error" ;
+    }
     return QString() ;
 }
 
-QString stopFilament::requestRGA()
+CDEMRequest::CDEMRequest(bool a)
+    :CDEM(a)
 {
-    return QString ("FL0") ;
+
 }
 
-QString stopFilament::processRGA(QString &)
+QString CDEMRequest::requestRGA()
 {
-//    QStringList list = filamentArray.split();
+    return QString("HV") + (CDEM ? QString("*") : QString("0")) ;//+ QString("NF7") + QString("CA") ;
+}
+
+QString CDEMRequest::processRGA(QString & b)
+{
+    if(b == "1")
+    {
+        emit state(b == "1") ;
+    }
+    else
+    {
+        return "CDEM Error" ;
+    }
     return QString() ;
 }
