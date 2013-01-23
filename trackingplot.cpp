@@ -8,17 +8,17 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
+#include <speczoomer.h>
 
 trackingPlot::trackingPlot(QWidget *parent) :
     QwtPlot(parent),
     curve(0),
-    zoomer(0),
     contextMenu(0)
 {
     xValue.start() ;
     curve = new QwtPlotCurve ;
     curve->attach(this) ;
-    zoomer = new specZoomer(canvas()) ;
+    specZoomer* zoomer = new specZoomer(canvas()) ;
     zoomer->setZoomBase(canvas()->rect());
     contextMenu = new QMenu(this) ;
     QAction *resetAction = new QAction("Reset", this) ;
@@ -53,21 +53,28 @@ void trackingPlot::savePlot()
 
 void trackingPlot::refresh()
 {
-    uint oldZoomIndex = zoomer->zoomRectIndex() ;
+    specZoomer* zoomer = getZoomer() ;
+    uint oldZoomIndex = (zoomer ? zoomer->zoomRectIndex() : 0) ;
     curve->setSamples(data) ;
     QRectF rectangle = curve->boundingRect() ;
     rectangle.translate(-rectangle.width()*.05, -rectangle.height()*.05);
     rectangle.setSize(1.1*rectangle.size()) ;
-    zoomer->setZoomBase(rectangle);
-    if (!oldZoomIndex) zoomer->zoom(0);
+    if (zoomer) zoomer->setZoomBase(rectangle);
+    if (zoomer && !oldZoomIndex) zoomer->zoom(0);
     QwtPlot::replot() ;
+}
+
+specZoomer* trackingPlot::getZoomer()
+{
+    return canvas()->findChild<specZoomer*>() ;
 }
 
 void trackingPlot::resetPlot()
 {
     data.clear() ;
     xValue.restart() ;
-    zoomer->setZoomBase(QRectF());
+    if (specZoomer *zoomer = getZoomer())
+        zoomer->setZoomBase(QRectF());
     refresh() ;
 }
 
@@ -79,18 +86,13 @@ void trackingPlot::addValue(double yValue)
     refresh() ;
 }
 
+
 //void trackingPlot::addmassValue(double massValue, double tempValue)
 //{
 //    data += QPointF(massValue, tempValue) ;
 //    refresh ;
 
 //}
-
-
- trackingPlot::~trackingPlot()
- {
-     delete zoomer ;
- }
 
 
 
