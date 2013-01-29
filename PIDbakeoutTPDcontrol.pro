@@ -12,8 +12,7 @@ SOURCES += \
     dialog335.cpp \
     timerbutton.cpp \
     filamentbutton.cpp \
-    cdembutton.cpp \
-    massplot.cpp
+    cdembutton.cpp
 INCLUDEPATH+=C:\\Qwt-6.0.1\\include
 
 LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib

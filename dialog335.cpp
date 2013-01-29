@@ -178,3 +178,8 @@ QString setSetpoint::request335()
             + setpoint::request335() ;
 }
 
+bool dialog335::answerComplete(const QByteArray &a, serialRequest *nextRequest)
+{
+    Q_UNUSED(nextRequest)
+    return a.contains("\r\n") ;
+}

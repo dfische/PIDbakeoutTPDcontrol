@@ -34,6 +34,7 @@ protected:
     virtual bool init()=0 ;
     void processError(const QString &) ;
     bool waitForReadyRead(int msecs) ;
+    virtual bool answerComplete(const QByteArray &, serialRequest* nextRequest) ;
 
 private:
     QString ErrorString ;

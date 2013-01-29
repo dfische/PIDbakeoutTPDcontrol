@@ -23,11 +23,15 @@ bool combivac::init()
 //        return false ;
     flush() ;
     //Fragen nach Gerätestatus
-    write("RSA\r") ;
-    if (!waitForReadyRead(1000))
-        return false ;
-    QByteArray ba = readAll() ;
-    if (ba != "0") return false ;
+    write("RVN\r") ;
+    QTime timeout ;
+    timeout.start();
+    while (!peek(100).contains("1.00\r"))
+    {
+        qDebug() << peek(100) ;
+        if (timeout.elapsed() > 500) return false ;
+    }
+    readAll() ;
     return true ;
 }
 
@@ -53,7 +57,7 @@ QString pressureRequest::process(QByteArray & pressureProcessArray)
     qDebug() << "Process" << this << "Kanal:" << Channel ;
 // TODO Manchmal kommen Antworten, die noch ein "\r" am Anfang haben.
     int pos = pressureProcessArray.indexOf("\r") ;
-    if (pos == -1) return "No termination character" ;
+//    if (pos == -1) return "No termination character" ;
     QString ppa(pressureProcessArray.left(pos)) ;
     pressureProcessArray.remove(0, pos+1) ;
     //Wenn das Array keine Werte enthält -> Fehler
@@ -101,4 +105,10 @@ QString pressureRequest::process(QByteArray & pressureProcessArray)
     return "" ;
 
 
+}
+
+bool combivac::answerComplete(const QByteArray &a, serialRequest *nextRequest )
+{
+    Q_UNUSED(nextRequest)
+    return a.contains('\r') ;
 }

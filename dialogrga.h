@@ -11,6 +11,7 @@ public:
     ~dialogRGA() ;
 private:
     bool init() ;
+    bool answerComplete(const QByteArray &, serialRequest *nextRequest) ;
 
 
 };
@@ -24,7 +25,8 @@ private:
 protected:
     virtual QString requestRGA() = 0 ;
     virtual QString processRGA(QString &) = 0 ;
-
+public:
+    bool virtual answerComplete(const QByteArray&) ;
 
 };
 
@@ -35,9 +37,11 @@ public:
     QString requestRGA() ;
     QString processRGA(QString &) ;
     singleMassRequest(int Ma) ;
+    ~singleMassRequest() ;
 private:
     int Mass ;
     QString process(QByteArray &) ;
+    bool answerComplete(const QByteArray &) ;
 protected:
     int mass() const ;
 };
