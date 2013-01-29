@@ -25,11 +25,7 @@ void serial::enqueue(serialRequest *requestPointer)
     requestPointer->setParent(this) ;
     // Only send, if nothing else is underway:
     if (waiting.isEmpty())
-    {
-        QByteArray req = requestPointer->request() ;
-        qDebug() << "sent a:" << req ;
-        write(req) ;
-    }
+        write(requestPointer->request()) ;
     waiting.enqueue(requestPointer) ;
 }
 
@@ -39,36 +35,22 @@ void serial::enqueue(serialRequest *requestPointer)
 void serial::read()
 {
     // wait for all bytes to arrive -- might not be necessary -> TODO: check!
-    serialRequest *pendingRequest = ((ignoreNext || waiting.isEmpty())? 0 : waiting.head()) ;
-    if (waiting.isEmpty() && !ignoreNext)
-        processError("answer without request: ");
-    if (!isok())
-    {
-        qDebug() << "Error:" << readAll() ;
-        return ;
-    }
+    serialRequest *currentRequest = ((ignoreNext || waiting.isEmpty())? 0 : waiting.dequeue()) ;
+    ignoreNext = false ;
     QTime timeout ;
     timeout.start() ;
-    while (!answerComplete(peek(100), pendingRequest))
-    {
-        if (timeout.elapsed() > 100) break ;
-//        {
-//            QByteArray p = peek(100) ;
-//            qDebug() << "Peek:" << p.size() << p ;
-//            for (int i = 0 ; i < p.size() ; ++i)
-//                qDebug() << "Peekbyte:" << i << (int) (p[i]) ;
-//            processError("Timeout") ;
-//            return ;
-//        }
-    }
     QByteArray data(readAll()) ;
-    // TODO timeout
-    qDebug() << "Datasize" << data.size() << "data:" << data ;
-    if (!ignoreNext)
+    while (!answerComplete(data, currentRequest))
     {
-        serialRequest *currentRequest = waiting.dequeue() ;
-        // We have only sent the first request in the queue,
-        // so we only need to evaluate that one
+        if (timeout.elapsed() > 100)
+        {
+            qDebug() << "timed out" ;
+            break ;
+        }
+        data += readAll() ;
+    }
+    if (currentRequest)
+    {
         processError(currentRequest->process(data)) ;
 
         if (currentRequest->singleUse()) delete currentRequest ;
@@ -76,11 +58,7 @@ void serial::read()
     }
     // if requests are pending, continue with the next in line:
     if (!waiting.isEmpty() && isok())
-    {
-        QByteArray req = waiting.head()->request() ;
-        qDebug() << "  sent:" << req ;
-        write(req) ;
-    }
+        write(waiting.head()->request()) ;
 }
 
 bool serial::answerComplete(const QByteArray &a, serialRequest *nextRequest)
