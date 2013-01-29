@@ -64,11 +64,6 @@ singleMassRequest::singleMassRequest(int Ma)
 
 }
 
-singleMassRequest::~singleMassRequest()
-{
-    qDebug() << "deleting smr:" << Mass << this ;
-}
-
 int singleMassRequest::mass() const
 {
     return Mass ;

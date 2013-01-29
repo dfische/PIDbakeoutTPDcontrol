@@ -26,35 +26,28 @@ bool combivac::init()
     write("RVN\r") ;
     QTime timeout ;
     timeout.start();
+    bool success = true ;
     while (!peek(100).contains("1.00\r"))
-    {
-        qDebug() << peek(100) ;
-        if (timeout.elapsed() > 500) return false ;
-    }
+        if (timeout.elapsed() > 1000) success = false ;
     readAll() ;
-    return true ;
+    return success ;
 }
 
 //Festlegen, dass es 3 Channel gibt
 pressureRequest::pressureRequest(int channel) :
     Channel(qBound(1, channel, 3))
 {
-    qDebug() << "Konstruktor von" << this << "fuer Kanal" << Channel;
 }
 
 //Senden des Befehls (es gibt einen pointer von SerialRequest auf request !
 QByteArray pressureRequest::request()
 {
-    qDebug() << "Request" << this << "Kanal:" << Channel;
-
     return QByteArray().append("RPV" + QString::number(Channel) + "\r") ;
-
 }
 
 //Verarbeitung der Daten
 QString pressureRequest::process(QByteArray & pressureProcessArray)
 {
-    qDebug() << "Process" << this << "Kanal:" << Channel ;
 // TODO Manchmal kommen Antworten, die noch ein "\r" am Anfang haben.
     int pos = pressureProcessArray.indexOf("\r") ;
 //    if (pos == -1) return "No termination character" ;
