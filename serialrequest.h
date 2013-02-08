@@ -15,6 +15,7 @@ public:
     //verarbeitet die Anfrage
     virtual QString process(QByteArray&)=0 ;
     bool singleUse() const ;
+    void setSingleUse(bool) ;
 signals:
     void numericvalue(double) ;
     void numericvalue(int) ;

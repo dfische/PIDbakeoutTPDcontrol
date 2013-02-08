@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabPID">
     <attribute name="title">
@@ -109,12 +109,8 @@
           <property name="text">
            <string>Start</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="StopPID">
-          <property name="text">
-           <string>Stop</string>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -129,6 +125,13 @@
          <widget class="deviceButton" name="resetPID">
           <property name="text">
            <string>Reset</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="StopPID">
+          <property name="text">
+           <string>Stop</string>
           </property>
          </widget>
         </item>
@@ -431,7 +434,7 @@
        </layout>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QwtPlot" name="PIDPlot">
+       <widget class="trackingPlot" name="PIDPlot">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -807,7 +810,7 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>290</x>
@@ -876,12 +879,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>deviceButton</class>
    <extends>QPushButton</extends>

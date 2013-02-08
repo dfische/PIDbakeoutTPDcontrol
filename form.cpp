@@ -21,18 +21,14 @@ Form::Form(QWidget *parent) :
     PIDtimer = new QTimer(this) ;
 
     bakeoutTimerIntervalChanged(ui->pressureTimeInterval ->value());
-    PIDtimerIntervalChanged(ui->PIDtempSpinBox->value()) ;
+    //PIDtimerIntervalChanged(ui->PIDtempSpinBox->value()) ;
 
 
-    ui->startTPD->setTimerInterval(1);
+
 
     connect(ui->startTPD, SIGNAL(timeout()), this, SLOT(getMassValue())) ;
 
 
-    connect(ui->PIDtempSpinBox, SIGNAL(valueChanged(int)), this, SLOT(PIDtimerIntervalChanged(int))) ;
-    connect(ui->StartPID, SIGNAL(clicked()), PIDtimer, SLOT(start())) ;
-    connect(ui->StopPID, SIGNAL(clicked()), PIDtimer, SLOT(stop())) ;
-    connect(PIDtimer, SIGNAL(timeout()), this, SLOT(getPIDValue())) ;
 
     connect(ui->pressureTimeInterval, SIGNAL(valueChanged(int)), this, SLOT(bakeoutTimerIntervalChanged(int))) ;
     connect(ui->stopPressureMeasurement, SIGNAL(clicked()), bakeoutTimer, SLOT(stop())) ;
@@ -45,26 +41,37 @@ Form::Form(QWidget *parent) :
     connect(ui->pSpin2, SIGNAL(valueChanged(int)), this, SLOT(pidValueChanged2())) ;
     connect(ui->iSpin2, SIGNAL(valueChanged(int)), this, SLOT(pidValueChanged2())) ;
     connect(ui->dSpin2, SIGNAL(valueChanged(int)), this, SLOT(pidValueChanged2())) ;
+    heaterOutputRequest1 = new heaterOutputRequest('1') ;
+    heaterOutputRequest2 = new heaterOutputRequest('2') ;
+    heaterOutputRequest1->setSingleUse(false) ;
+    heaterOutputRequest2->setSingleUse(false) ;
+
+    connect(heaterOutputRequest1, SIGNAL(numericvalue(double)), ui->HeaterOutput1, SLOT(setNum(double))) ;
+    connect(heaterOutputRequest2, SIGNAL(numericvalue(double)), ui->HeaterOutput2, SLOT(setNum(double))) ;
+    connect(ui->StartPID, SIGNAL(toggled(bool)), this, SLOT(heaterOutput(bool))) ;
+
+    foreach(QCheckBox* checkBox, findChildren<QCheckBox*>())
+        connect(checkBox, SIGNAL(toggled(bool)), this, SLOT(checkBoxToggled(bool))) ;
+
+
+    initializeRequest(new pressureRequest(1), ui->pressureCombi1, ui->pressurePlot1, ui->combi1CheckBox) ;
+    initializeRequest(new pressureRequest(2), ui->pressureCombi2, ui->pressurePlot2, ui->combi2CheckBox) ;
+    initializeRequest(new temperatureRequest('A'), ui->tempValueA, ui->PIDPlot, ui->plotTemperatureA) ;
+    initializeRequest(new temperatureRequest('B'), ui->tempValueB, ui->PIDPlot, ui->plotTemperatureB) ;
 }
 
-void Form::getPIDValue()
+void Form::heaterOutput(bool a)
 {
-    temperatureRequest* temperature1 = new temperatureRequest('A') ;
-    temperatureRequest* temperature2 = new temperatureRequest('B') ;
-    connect(temperature1, SIGNAL(numericvalue(double)), ui->tempValueA, SLOT(setNum(double))) ;
-    connect(temperature2, SIGNAL(numericvalue(double)), ui->tempValueB, SLOT(setNum(double))) ;
-    connect(temperature1, SIGNAL(numericvalue(double)), ui->temperature335, SLOT(setNum(double))) ;
-    connect(temperature2, SIGNAL(numericvalue(double)), ui->temperatureThermocouple, SLOT(setNum(double))) ;
-    heaterOutputRequest* heaterOutput1 = new heaterOutputRequest('1') ;
-    heaterOutputRequest* heaterOutput2 = new heaterOutputRequest('2') ;
-    connect(heaterOutput1, SIGNAL(numericvalue(double)), ui->HeaterOutput1, SLOT(setNum(double))) ;
-    connect(heaterOutput2, SIGNAL(numericvalue(double)), ui->HeaterOutput2, SLOT(setNum(double))) ;
-    dl->enqueue(temperature1) ;
-    dl->enqueue(temperature2) ;
-    dl->enqueue(heaterOutput1) ;
-    dl->enqueue(heaterOutput2) ;
-
-
+    if (a)
+    {
+        dl->enqueue(heaterOutputRequest1) ;
+        dl->enqueue(heaterOutputRequest2) ;
+    }
+    else
+    {
+        heaterOutputRequest1->setParent(this) ;
+        heaterOutputRequest2->setParent(this) ;
+    }
 }
 
 void Form::getMassValue()
@@ -84,10 +91,63 @@ void Form::getMassValue()
 
 }
 
-void Form::PIDtimerIntervalChanged(int b)
+//void Form::PIDtimerIntervalChanged(int b)
+//{
+//    PIDtimer->setInterval((1000*b)) ;
+//}
+
+void Form::checkBoxToggled(bool b)
 {
-    PIDtimer->setInterval((1000*b)) ;
+    QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender()) ;
+    if (!requestMap.contains(checkBox)) return ;
+    serialRequest* request =  requestMap[checkBox] ;
+    if (!request) return ;
+    if (!b)
+    {        
+        if (request) request->setParent(this);
+    }
+    else
+    {
+        if (request->inherits("dialog335Request"))
+            dl->enqueue(request) ;
+        if (request->inherits("pressureRequest"))
+            cv->enqueue(request) ;
+        if (request->inherits("dialogRGARequest"))
+            rg->enqueue(request) ;
+    }
 }
+
+serialRequest* Form::initializeRequest(serialRequest *request, QLabel *label, trackingPlot *plot, QCheckBox* checkBox)
+{
+    if (!request) return 0 ;
+    request->setParent(this);
+    if (label)
+    {
+        connect(request, SIGNAL(numericvalue(double)), label, SLOT(setNum(double))) ;
+        connect(request, SIGNAL(numericvalue(int)), label, SLOT(setNum(int))) ;
+    }
+    if (plot)
+        connect(request, SIGNAL(numericvalue(double)), plot, SLOT(addValue(double))) ;
+//    connect(request, SIGNAL(destroyed()), this, SLOT(requestDeleted())) ;
+    requestMap[checkBox] = request ;
+    request->setSingleUse(false) ;
+    return request ;
+}
+
+/*void Form::requestDeleted()
+{
+    serialRequest* request = (serialRequest*)sender() ;
+    QList<QCheckBox*> checkBoxes ;
+    foreach(QCheckBox* key, requestMap.keys())
+        if (request == requestMap[key])
+            checkBoxes << key ;
+    foreach(QCheckBox* checkBox, checkBoxes)
+    {
+        requestMap.remove(checkBox) ;
+        checkBox->setCheckState(Qt::Unchecked);
+    }
+}*/
+
 void Form::getBakeoutValue()
 {
     pressureRequest * request =0 ;
@@ -101,8 +161,8 @@ void Form::getBakeoutValue()
     }
 
 
-    PRESSUREREQUESTMACRO(combi1CheckBox, pressureCombi1, 1, pressurePlot1) ;
-    PRESSUREREQUESTMACRO(combi2CheckBox, pressureCombi2, 2, pressurePlot2) ;
+//    PRESSUREREQUESTMACRO(combi1CheckBox, pressureCombi1, 1, pressurePlot1) ;
+//    PRESSUREREQUESTMACRO(combi2CheckBox, pressureCombi2, 2, pressurePlot2) ;
     PRESSUREREQUESTMACRO(ionGaugeCheckBox, pressureIonGauge, 3, ionGaugePlot) ;
 
 }

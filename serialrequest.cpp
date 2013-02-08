@@ -13,3 +13,8 @@ bool serialRequest::singleUse() const
 {
     return single ;
 }
+
+void serialRequest::setSingleUse(bool b)
+{
+    single = b ;
+}
