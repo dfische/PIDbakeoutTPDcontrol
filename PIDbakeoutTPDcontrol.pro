@@ -13,7 +13,8 @@ SOURCES += \
     timerbutton.cpp \
     serialconfigdialog.cpp \
     filamentbutton.cpp \
-    cdembutton.cpp
+    cdembutton.cpp \
+    serialdebugbuffer.cpp
 
 win32 {
     include(C:/Users/Administrator/Downloads/qextserialport-1.2beta2/src/qextserialport.pri)
@@ -43,7 +44,8 @@ HEADERS += \
     serialconfigdialog.h \
     filamentbutton.h \
     cdembutton.h \
-    massplot.h
+    massplot.h \
+    serialdebugbuffer.h
 
 FORMS += \
     form.ui \

@@ -4,37 +4,69 @@
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
+#include "serialdebugbuffer.h"
+#include <QTableView>
 
+qint64 serial::write(const QByteArray &data)
+{
+    if (debugBuffer) debugBuffer->addOutgoingEntry(data) ;
+    return QextSerialPort::write(data) ;
+}
+
+QByteArray serial::readAll()
+{
+    QByteArray result = QextSerialPort::readAll() ;
+    if (debugBuffer) debugBuffer->addIncomingEntry(result) ;
+    return result ;
+}
+
+void serial::showDebugBuffer()
+{
+    if (debugBuffer && debugBufferView)
+    {
+        debugBufferView->setModel(debugBuffer);
+        debugBufferView->show();
+    }
+}
+
+void serial::setDebugBufferSize(int items)
+{
+    if (debugBuffer) debugBuffer->setMaxEntries(items) ;
+}
 
 serial::serial(PortSettings Settings, QObject *parent)
     : QextSerialPort(Settings,EventDriven, parent),
-      ignoreNext(false),
-      awaitingResponse(false)
+      queueMutex(QMutex::Recursive),
+      debugBuffer(new serialDebugBuffer(this)),
+      debugBufferView(0)
 {
-   processError("not initialized") ;
-   connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
-   delayTime.setSingleShot(true) ;
-   connect(&delayTime,SIGNAL(timeout()), this, SLOT(writeNext())) ;
-   delayTime.setInterval(0);
+    debugBufferView = new QTableView ;
+    processError("not initialized") ;
+    connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
+    delayTime.setSingleShot(true) ;
+    delayTime.setInterval(0);
+    connect(&delayTime,SIGNAL(timeout()), this, SLOT(writeNext())) ;
+}
+
+serial::~serial()
+{
+    delete debugBufferView ;
 }
 
 void serial::prepareToWrite()
 {
-    if (awaitingResponse || delayTime.isActive()) return ;
+    if (!writeMutex.tryLock() || delayTime.isActive()) return ;
     delayTime.start();
+    writeMutex.unlock();
 }
 
 void serial::writeNext()
 {
-    mutex.lock();
-    if (waiting.isEmpty())
-    {
-        mutex.unlock();
-        return ;
-    }
-    write(waiting.head()->request()) ;
-    awaitingResponse = true ;
-    mutex.unlock();
+    if (!writeMutex.tryLock()) delayTime.start();
+    queueMutex.lock();
+    if (!waiting.isEmpty())
+        write(waiting.head()->request()) ;
+    queueMutex.unlock();
 }
 
 void serial::setMinimumDelay(int msec)
@@ -44,7 +76,6 @@ void serial::setMinimumDelay(int msec)
 
 void serial::enqueue(serialRequest *requestPointer)
 {
-    connect(requestPointer, SIGNAL(destroyed()), this, SLOT(requestDestroyed())) ;
     requestPointer->setParent(this) ;
     if (!isok())
     {
@@ -52,9 +83,9 @@ void serial::enqueue(serialRequest *requestPointer)
         return ;
     }
     if (waiting.contains(requestPointer)) return ;
-    mutex.lock();
+    queueMutex.lock();
     waiting.enqueue(requestPointer) ;
-    mutex.unlock() ;
+    queueMutex.unlock() ;
     prepareToWrite();
 }
 
@@ -64,10 +95,8 @@ void serial::enqueue(serialRequest *requestPointer)
 void serial::read()
 {
     // get waiting request
-    mutex.lock();
-    awaitingResponse = false ;
-    serialRequest *currentRequest = ((ignoreNext || waiting.isEmpty())? 0 : waiting.dequeue()) ;
-    ignoreNext = false ;
+    queueMutex.lock();
+    serialRequest *currentRequest = (waiting.isEmpty() ? 0 : waiting.dequeue()) ;
 
     // wait for all bytes to arrive -- might not be necessary -> TODO: check!
     QTime timeout ;
@@ -87,14 +116,11 @@ void serial::read()
     {
         processError(currentRequest->process(data)) ;
         if (currentRequest->singleUse())
-        {
-            mutex.unlock();
             delete currentRequest ;
-            mutex.lock();
-        }
-        else if (isok()) waiting.enqueue(currentRequest);
+        else enqueue(currentRequest);
     }
-    mutex.unlock();
+    queueMutex.unlock();
+    writeMutex.unlock();
     prepareToWrite();
 }
 
@@ -105,51 +131,46 @@ bool serial::answerComplete(const QByteArray &a, serialRequest *nextRequest)
     return true ;
 }
 
-void serial::requestDestroyed()
-{
-    serialRequest* request = (serialRequest*) sender() ;
-    mutex.lock();
-    if (!waiting.isEmpty() && waiting.head() == request) ignoreNext = true ;
-    waiting.removeAll(request) ;
-    mutex.unlock();
-}
-
 void serial::childEvent(QChildEvent *e)
 {
     if (!e->removed()) return ;
-    serialRequest *request = (serialRequest*) (e->child()) ;
-    if (!requst) return ;
-    mutex.lock() ;
-    if (!waiting.isEmpty() && waiting.head() == request) ignoreNext = true ;
+    serialRequest *request = qobject_cast<serialRequest*>(e->child()) ;
+    if (!request) return ;
+    queueMutex.lock() ;
+    if (!waiting.isEmpty() && waiting.head() == request)
+        waiting.head() = 0 ;
     waiting.removeAll(request) ;
-    mutex.unlock() ;
+    queueMutex.unlock() ;
 }
 
 void serial::clearError()
 {
     clearQueue();
     if (!init())
+    {
         processError("Initializing failed") ;
+        return ;
+    }
     else ErrorString.clear() ;
     // rebuild queue:
     buildQueue();
-    if (!waiting.isEmpty())
-        write(waiting.head()->request()) ;
+    writeMutex.unlock() ;
+    prepareToWrite();
 }
 
 void serial::clearQueue()
 {
-    mutex.lock();
+    queueMutex.lock();
     waiting.clear() ;
-    mutex.unlock();
+    queueMutex.unlock();
 }
 
 void serial::buildQueue()
 {
+    queueMutex.lock();
     clearQueue();
-    mutex.lock();
     waiting << findChildren<serialRequest*>() ;
-    mutex.unlock();
+    queueMutex.unlock();
 }
 
 void serial::processError(const QString & Es)
@@ -211,4 +232,10 @@ void deviceButton::errorOccured(QString S)
     setToolTip(S);
 }
 
-
+void deviceButton::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (e->button() == Qt::RightButton && e->modifiers() == Qt::NoModifier && device)
+        device->showDebugBuffer();
+    else
+        QPushButton::mouseReleaseEvent(e) ;
+}

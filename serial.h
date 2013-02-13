@@ -4,7 +4,10 @@
 #include <QQueue>
 #include <QPushButton>
 #include <QMutex>
+#include <QTimer>
 class serialRequest ;
+class serialDebugBuffer ;
+class QTableView ;
 
 struct serialSettings : public PortSettings
 {
@@ -29,33 +32,37 @@ class serial : public QextSerialPort
     Q_OBJECT
 public:
     explicit serial(PortSettings, QObject* parent=0) ;
+    ~serial() ;
     void enqueue(serialRequest* requestPointer) ;
     bool isok(){return ErrorString.isEmpty();}
     void setMinimumDelay(int msec) ;
+    void setDebugBufferSize(int items) ;
 protected:
     virtual bool init()=0 ;
     void processError(const QString &) ;
     bool waitForReadyRead(int msecs) ;
     virtual bool answerComplete(const QByteArray &, serialRequest* nextRequest) ;
+    qint64 write(const QByteArray &data) ;
+    QByteArray readAll() ;
 
 private:
     QString ErrorString ;
-    QMutex mutex ;
+    QMutex queueMutex, writeMutex ;
     QQueue<serialRequest*> waiting ;
     QTimer delayTime ;
-    bool awaitingResponse ;
-    bool ignoreNext ;
+    serialDebugBuffer* debugBuffer ;
+    QTableView *debugBufferView;
     void clearQueue() ;
     void buildQueue() ;
     void childEvent(QChildEvent *) ;
     void prepareToWrite() ;
 private slots:
     void read() ;
-    void requestDestroyed() ;
     void writeNext() ;
 
 public slots:
     void clearError() ;
+    void showDebugBuffer() ;
 
 signals:
     void Error(const QString &) ;
@@ -73,6 +80,7 @@ public:
 private:
     serial* device ;
     void setButtonColor(const QColor & Color) ;
+    void mouseReleaseEvent(QMouseEvent *e) ;
 private slots:
     void resetDevice() ;
     void errorOccured(QString S) ;
