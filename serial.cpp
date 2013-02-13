@@ -63,9 +63,9 @@ void serial::enqueue(serialRequest *requestPointer)
 
 void serial::read()
 {
-    awaitingResponse = false ;
     // get waiting request
     mutex.lock();
+    awaitingResponse = false ;
     serialRequest *currentRequest = ((ignoreNext || waiting.isEmpty())? 0 : waiting.dequeue()) ;
     ignoreNext = false ;
 
@@ -86,7 +86,12 @@ void serial::read()
     if (currentRequest)
     {
         processError(currentRequest->process(data)) ;
-        if (currentRequest->singleUse()) delete currentRequest ;
+        if (currentRequest->singleUse())
+        {
+            mutex.unlock();
+            delete currentRequest ;
+            mutex.lock();
+        }
         else if (isok()) waiting.enqueue(currentRequest);
     }
     mutex.unlock();
