@@ -3,6 +3,7 @@
 #include "qextserialport.h"
 #include <QQueue>
 #include <QPushButton>
+#include <QMutex>
 class serialRequest ;
 
 struct serialSettings : public PortSettings
@@ -34,16 +35,19 @@ protected:
     virtual bool init()=0 ;
     void processError(const QString &) ;
     bool waitForReadyRead(int msecs) ;
+    virtual bool answerComplete(const QByteArray &, serialRequest* nextRequest) ;
 
 private:
     QString ErrorString ;
+    QMutex mutex ;
     QQueue<serialRequest*> waiting ;
     bool ignoreNext ;
     void clearQueue() ;
     void buildQueue() ;
-    void childEvent(QChildEvent*) ;
+    void childEvent(QChildEvent *) ;
 private slots:
     void read() ;
+    void requestDestroyed() ;
 
 public slots:
     void clearError() ;

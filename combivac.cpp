@@ -23,37 +23,34 @@ bool combivac::init()
 //        return false ;
     flush() ;
     //Fragen nach Gerätestatus
-    write("RSA\r") ;
-    if (!waitForReadyRead(1000))
-        return false ;
-    QByteArray ba = readAll() ;
-    if (ba != "0") return false ;
-    return true ;
+    write("RVN\r") ;
+    QTime timeout ;
+    timeout.start();
+    bool success = true ;
+    while (!peek(100).contains("1.00\r"))
+        if (timeout.elapsed() > 1000) success = false ;
+    readAll() ;
+    return success ;
 }
 
 //Festlegen, dass es 3 Channel gibt
 pressureRequest::pressureRequest(int channel) :
     Channel(qBound(1, channel, 3))
 {
-    qDebug() << "Konstruktor von" << this << "fuer Kanal" << Channel;
 }
 
 //Senden des Befehls (es gibt einen pointer von SerialRequest auf request !
 QByteArray pressureRequest::request()
 {
-    qDebug() << "Request" << this << "Kanal:" << Channel;
-
     return QByteArray().append("RPV" + QString::number(Channel) + "\r") ;
-
 }
 
 //Verarbeitung der Daten
 QString pressureRequest::process(QByteArray & pressureProcessArray)
 {
-    qDebug() << "Process" << this << "Kanal:" << Channel ;
 // TODO Manchmal kommen Antworten, die noch ein "\r" am Anfang haben.
     int pos = pressureProcessArray.indexOf("\r") ;
-    if (pos == -1) return "No termination character" ;
+//    if (pos == -1) return "No termination character" ;
     QString ppa(pressureProcessArray.left(pos)) ;
     pressureProcessArray.remove(0, pos+1) ;
     //Wenn das Array keine Werte enthält -> Fehler
@@ -101,4 +98,10 @@ QString pressureRequest::process(QByteArray & pressureProcessArray)
     return "" ;
 
 
+}
+
+bool combivac::answerComplete(const QByteArray &a, serialRequest *nextRequest )
+{
+    Q_UNUSED(nextRequest)
+    return a.contains('\r') ;
 }

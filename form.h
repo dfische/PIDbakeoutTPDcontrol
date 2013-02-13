@@ -3,10 +3,17 @@
 #include <QTimer>
 
 #include <QWidget>
+#include <QMap>
 
 class combivac ;
 class dialog335 ;
 class dialogRGA ;
+class serialRequest ;
+class QCheckBox ;
+class trackingPlot ;
+class QLabel ;
+class serial ;
+class heaterOutputRequest ;
 namespace Ui {
 class Form;
 }
@@ -24,15 +31,20 @@ private:
     combivac *cv ;
     QTimer * bakeoutTimer ;
     QTimer *PIDtimer ;
+    heaterOutputRequest *heaterOutputRequest1 ;
+    heaterOutputRequest *heaterOutputRequest2;
 
     dialog335 *dl ;
     dialogRGA *rg ;
+    QMap<QCheckBox*, serialRequest*> requestMap ;
+    serialRequest* initializeRequest(serialRequest*, QLabel *label, trackingPlot *plot, QCheckBox *checkBox) ;
 
 private slots:
     void bakeoutTimerIntervalChanged(int) ;
-    void getBakeoutValue() ;   // void getTemperatureValue() ;
-    void PIDtimerIntervalChanged(int) ;
-    void getPIDValue() ;
+    void getBakeoutValue() ;
+    // void getTemperatureValue() ;
+    //void PIDtimerIntervalChanged(int) ;
+    void heaterOutput(bool) ;
     void on_heaterRange1_currentIndexChanged(int index);
     void on_setpoint1_valueChanged(double arg1);
     void on_setpoint2_valueChanged(double arg1);
@@ -40,6 +52,7 @@ private slots:
     void pidValueChanged1() ;
     void pidValueChanged2() ;
     void getMassValue() ;
+    void checkBoxToggled(bool) ;
 };
 
 #endif // FORM_H

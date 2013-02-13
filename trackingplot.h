@@ -22,13 +22,16 @@ private:
     QMenu *contextMenu ;
     void refresh() ;
     specZoomer *getZoomer() ;
+    QString generateTextData() const ;
 signals:
 private slots:
     void resetPlot() ;
     void savePlot() ;
+    void copyData() ;
 
 public slots:
     void addValue(double yValue) ;
+   // void addmassValue(double , double) ;
 };
 
 #endif // TRACKINGPLOT_H

@@ -1,5 +1,6 @@
 #include "dialogrga.h"
 #include "QTest"
+#include <QDebug>
 dialogRGA::dialogRGA(QObject *parent) :
     serial(serialSettings(BAUD28800,
                           DATA_8,
@@ -29,6 +30,14 @@ bool dialogRGA::init()
 dialogRGA::~dialogRGA()
 {
     write("FL0\rHV0\rMR0\r") ;
+    qDebug() << "Filament abgeschaltet" ;
+}
+
+bool dialogRGA::answerComplete(const QByteArray & a, serialRequest *nextRequest)
+{
+    dialogRGARequest* nr = dynamic_cast<dialogRGARequest*>(nextRequest) ; // TODO in serial::enqueue() einbauen
+    if (nr) return nr->answerComplete(a) ;
+    return a.contains("\n\r") ;
 }
 
 QByteArray dialogRGARequest::request()
@@ -134,4 +143,14 @@ QString CDEMRequest::processRGA(QString & b)
         return "CDEM Error" ;
     }
     return QString() ;
+}
+
+bool dialogRGARequest::answerComplete(const QByteArray &a)
+{
+    return a.contains("\n\r") ;
+}
+
+bool singleMassRequest::answerComplete(const QByteArray &a)
+{
+    return a.size() >= 4 ;
 }

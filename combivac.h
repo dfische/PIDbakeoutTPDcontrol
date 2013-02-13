@@ -20,6 +20,7 @@ class combivac : public serial
     Q_OBJECT
 private:
     bool init() ;
+    bool answerComplete(const QByteArray &, serialRequest *nextRequest) ;
 public:
     explicit combivac(QObject *parent = 0);
     

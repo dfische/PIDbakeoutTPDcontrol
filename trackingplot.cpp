@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <speczoomer.h>
+#include <QApplication>
+#include <QClipboard>
 
 trackingPlot::trackingPlot(QWidget *parent) :
     QwtPlot(parent),
@@ -23,11 +25,28 @@ trackingPlot::trackingPlot(QWidget *parent) :
     contextMenu = new QMenu(this) ;
     QAction *resetAction = new QAction("Reset", this) ;
     QAction *saveAction = new QAction("Save", this) ;
+    QAction *copyAction = new QAction("Copy", this) ;
     connect(resetAction, SIGNAL(triggered()), this, SLOT(resetPlot())) ;
     connect(saveAction, SIGNAL(triggered()), this, SLOT(savePlot())) ;
+    connect(copyAction, SIGNAL(triggered()), this, SLOT(copyData())) ;
     contextMenu->addAction(resetAction) ;
     contextMenu->addAction(saveAction) ;
+    contextMenu->addAction(copyAction) ;
+}
 
+QString trackingPlot::generateTextData() const
+{
+    QString a ;
+    QTextStream out(& a) ;
+    foreach (QPointF xy, data)
+        out << xy.x() << "\t" << xy.y() << endl ;
+    return a ;
+}
+
+void trackingPlot::copyData()
+{
+    QClipboard *cb = QApplication::clipboard() ;
+    cb->setText(generateTextData()) ;
 }
 
 void trackingPlot::contextMenuEvent(QContextMenuEvent *e)
@@ -46,8 +65,7 @@ void trackingPlot::savePlot()
         return ;
     }
     QTextStream out(&file) ;
-    foreach (QPointF xy, data)
-        out << xy.x() << "\t" << xy.y() << endl ;
+    out << generateTextData() ;
     file.close() ;
 }
 
@@ -85,6 +103,14 @@ void trackingPlot::addValue(double yValue)
     data += QPointF(xValue.elapsed()/1000., yValue) ;
     refresh() ;
 }
+
+
+//void trackingPlot::addmassValue(double massValue, double tempValue)
+//{
+//    data += QPointF(massValue, tempValue) ;
+//    refresh ;
+
+//}
 
 
 
