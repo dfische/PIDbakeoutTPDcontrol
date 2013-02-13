@@ -1,7 +1,7 @@
 #include "serialrequest.h"
 #include "serial.h"
 
-serialRequest::serialRequest(QObject* parent, bool singleUse = true)
+serialRequest::serialRequest(QObject* parent, bool singleUse)
     : single(singleUse),
       QObject(parent)
 {

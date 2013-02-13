@@ -9,7 +9,7 @@ class serialRequest : public QObject
 private:
     bool single ;
 public:
-    serialRequest(QObject *parent = 0, bool singleUse = false);
+    serialRequest(QObject *parent = 0, bool singleUse = true);
     //generieren der Abfrage
     virtual QByteArray request()=0 ;
     //verarbeitet die Anfrage

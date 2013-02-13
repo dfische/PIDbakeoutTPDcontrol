@@ -23,7 +23,6 @@ Form::Form(QWidget *parent) :
 
 
     ui->startTPD->setTimerInterval(1);
-    ui->startFilament->setFilamentTimerInteval(1) ;
 
     connect(ui->startTPD, SIGNAL(timeout()), this, SLOT(getMassValue())) ;
 
