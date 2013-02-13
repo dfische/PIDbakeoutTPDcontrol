@@ -11,7 +11,9 @@ SOURCES += \
     speczoomer.cpp \
     dialog335.cpp \
     timerbutton.cpp \
-    serialconfigdialog.cpp
+    serialconfigdialog.cpp \
+    filamentbutton.cpp \
+    cdembutton.cpp
 
 win32 {
     include(C:/Users/Administrator/Downloads/qextserialport-1.2beta2/src/qextserialport.pri)
@@ -38,7 +40,10 @@ HEADERS += \
     speczoomer.h \
     dialog335.h \
     timerbutton.h \
-    serialconfigdialog.h
+    serialconfigdialog.h \
+    filamentbutton.h \
+    cdembutton.h \
+    massplot.h
 
 FORMS += \
     form.ui \

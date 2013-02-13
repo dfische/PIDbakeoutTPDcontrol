@@ -98,6 +98,7 @@ public:
     
 private:
     bool init() ;
+    bool answerComplete(const QByteArray &, serialRequest *nextRequest) ;
 
 signals:
     

@@ -6,12 +6,12 @@ timerButton::timerButton(QWidget *parent) :
 
     timer = new QTimer(this) ;
     setCheckable(true) ;
-    connect(this, SIGNAL(toggled(bool)), this, SLOT(toggletimer(bool))) ;
+    connect(this, SIGNAL(toggled(bool)), this, SLOT(toggleTimer(bool))) ;
     connect(timer, SIGNAL(timeout()), this, SIGNAL(timeout())) ;
 
 }
 
-void timerButton::toggletimer(bool a)
+void timerButton::toggleTimer(bool a)
 {
     if (a)
     {

@@ -1,26 +1,61 @@
 #include "serial.h"
 #include "serialrequest.h"
 #include <QTest>
+#include <QDebug>
+#include <QTime>
+#include <QTimer>
+
 
 serial::serial(PortSettings Settings, QObject *parent)
     : QextSerialPort(Settings,EventDriven, parent),
-      ignoreNext(false)
+      ignoreNext(false),
+      awaitingResponse(false)
 {
    processError("not initialized") ;
    connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
+   delayTime.setSingleShot(true) ;
+   connect(&delayTime,SIGNAL(timeout()), this, SLOT(writeNext())) ;
+   delayTime.setInterval(0);
+}
 
+void serial::prepareToWrite()
+{
+    if (awaitingResponse || delayTime.isActive()) return ;
+    delayTime.start();
+}
 
+void serial::writeNext()
+{
+    mutex.lock();
+    if (waiting.isEmpty())
+    {
+        mutex.unlock();
+        return ;
+    }
+    write(waiting.head()->request()) ;
+    awaitingResponse = true ;
+    mutex.unlock();
+}
+
+void serial::setMinimumDelay(int msec)
+{
+    delayTime.setInterval(msec) ;
 }
 
 void serial::enqueue(serialRequest *requestPointer)
 {
-    if (requestPointer->parent() == this && waiting.contains(requestPointer)) return ;
+    connect(requestPointer, SIGNAL(destroyed()), this, SLOT(requestDestroyed())) ;
     requestPointer->setParent(this) ;
-    if (!isok()) return ;
-    // Only send, if nothing else is underway:
-    if (waiting.isEmpty())
-        write(requestPointer->request()) ;
+    if (!isok())
+    {
+        if (requestPointer->singleUse()) delete requestPointer ;
+        return ;
+    }
+    if (waiting.contains(requestPointer)) return ;
+    mutex.lock();
     waiting.enqueue(requestPointer) ;
+    mutex.unlock() ;
+    prepareToWrite();
 }
 
 // INVARIANT for communication:  First item in queue has been sent and
@@ -28,71 +63,103 @@ void serial::enqueue(serialRequest *requestPointer)
 
 void serial::read()
 {
-    // wait for all bytes to arrive -- might not be necessary -> TODO: check!
-    int bytes = bytesAvailable() ;
-    do
-    {
-        bytes = bytesAvailable() ;
-        QTest::qWait(10) ;
-    }
-    while (bytesAvailable() > bytes && !canReadLine()) ;
-    QByteArray data = readAll() ;
-    serialRequest *currentRequest = 0 ;
-    if (!ignoreNext)
-    {
-        if (waiting.isEmpty())
-        {
-            // ooops, we got data, although not asked for:
-            processError("answer without request");
-            return ;
-        }
-        // We have only sent the first request in the queue,
-        // so we only need to evaluate that one
-        currentRequest = waiting.dequeue() ;
-        processError(currentRequest->process(data)) ;
+    // get waiting request
+    mutex.lock();
+    awaitingResponse = false ;
+    serialRequest *currentRequest = ((ignoreNext || waiting.isEmpty())? 0 : waiting.dequeue()) ;
+    ignoreNext = false ;
 
-        if (currentRequest->singleUse()) delete currentRequest ;
-        else enqueue(currentRequest);
+    // wait for all bytes to arrive -- might not be necessary -> TODO: check!
+    QTime timeout ;
+    timeout.start() ;
+    QByteArray data(readAll()) ;
+    while (!answerComplete(data, currentRequest))
+    {
+        if (timeout.elapsed() > 100)
+        {
+            qDebug() << "timed out" ;
+            break ;
+        }
+        data += readAll() ;
     }
-    // if requests are pending, continue with the next in line:
-    if (!waiting.isEmpty() && waiting.head() != currentRequest)
-        write(waiting.head()->request()) ;
+
+    if (currentRequest)
+    {
+        processError(currentRequest->process(data)) ;
+        if (currentRequest->singleUse())
+        {
+            mutex.unlock();
+            delete currentRequest ;
+            mutex.lock();
+        }
+        else if (isok()) waiting.enqueue(currentRequest);
+    }
+    mutex.unlock();
+    prepareToWrite();
+}
+
+bool serial::answerComplete(const QByteArray &a, serialRequest *nextRequest)
+{
+    Q_UNUSED(a)
+    Q_UNUSED(nextRequest)
+    return true ;
+}
+
+void serial::requestDestroyed()
+{
+    serialRequest* request = (serialRequest*) sender() ;
+    mutex.lock();
+    if (!waiting.isEmpty() && waiting.head() == request) ignoreNext = true ;
+    waiting.removeAll(request) ;
+    mutex.unlock();
 }
 
 void serial::childEvent(QChildEvent *e)
 {
-    QextSerialPort::childEvent(e) ;
-    serialRequest *r = qobject_cast<serialRequest*>(e->child()) ;
-    if (!r || !e->removed()) return ;
-    e->accept();
-    ignoreNext = (waiting.head() == r) ;
-    waiting.removeAll(r) ;
+    if (!e->removed()) return ;
+    serialRequest *request = (serialRequest*) (e->child()) ;
+    if (!requst) return ;
+    mutex.lock() ;
+    if (!waiting.isEmpty() && waiting.head() == request) ignoreNext = true ;
+    waiting.removeAll(request) ;
+    mutex.unlock() ;
 }
 
 void serial::clearError()
 {
+    clearQueue();
     if (!init())
         processError("Initializing failed") ;
     else ErrorString.clear() ;
     // rebuild queue:
     buildQueue();
+    if (!waiting.isEmpty())
+        write(waiting.head()->request()) ;
 }
 
 void serial::clearQueue()
 {
+    mutex.lock();
     waiting.clear() ;
+    mutex.unlock();
 }
 
 void serial::buildQueue()
 {
+    clearQueue();
+    mutex.lock();
     waiting << findChildren<serialRequest*>() ;
+    mutex.unlock();
 }
 
 void serial::processError(const QString & Es)
 {
-    clearQueue() ;
-    ErrorString = Es ;
-    if (!Es.isEmpty()) emit Error(Es) ;
+    ErrorString = Es ;   
+    if (!Es.isEmpty())
+    {
+        clearQueue() ;
+        emit Error(Es) ;
+    }    
 }
 
 bool serial::waitForReadyRead(int msecs)

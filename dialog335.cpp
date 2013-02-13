@@ -1,5 +1,6 @@
 #include "dialog335.h"
 #include <QTest>
+#include <QDebug>
 dialog335::dialog335(QObject *parent) :
     serial(serialSettings(BAUD57600,
                           DATA_7,
@@ -8,7 +9,7 @@ dialog335::dialog335(QObject *parent) :
                           FLOW_OFF,
                           -1), parent)
 {
-    setPortName("COM4") ;
+    setPortName("COM12") ;
     open(ReadWrite) ;
 }
 
@@ -47,21 +48,21 @@ QByteArray dialog335Request::request()
 }
 
 QString dialog335Request::process(QByteArray & processByteArray)
-{
-    QTest::qWait(100) ;
-    int pos = processByteArray.indexOf("\r\n") ;
+{   
+    //QTest::qWait(100) ;
+    int pos = processByteArray.indexOf("\r\n") ;    
     if (pos == -1)
-        return "Wrong Answer from Device" ;
-    QString leftPart = processByteArray.left(pos) ;
-    leftPart.remove(';') ;
-    processByteArray = processByteArray.right(processByteArray.size() - pos - 2) ;
-    return process335(leftPart) ;
+        return "Wrong Answer from Device" ;    
+    QString leftPart = processByteArray.left(pos) ;    
+    leftPart.remove(';') ;    
+    processByteArray = processByteArray.right(processByteArray.size() - pos - 2) ;    
+    return process335(leftPart) ;    
 
 }
 
 temperatureRequest::temperatureRequest(char ch)
     : dialog335Request(ch)
-{}
+{setObjectName("Temperature 335 Request");}
 
 QString temperatureRequest::request335()
 {
@@ -77,7 +78,7 @@ QString temperatureRequest::process335(QString &temperatureProcessArray)
 heaterOutputRequest::heaterOutputRequest(char ch)
     :dialog335Request(ch)
 {
-
+    setObjectName("Heater Output Request");
 }
 QString heaterOutputRequest::request335()
 {
@@ -94,7 +95,7 @@ setHeaterRange::setHeaterRange(int rv, char ch)
     : dialog335Request(ch),
       rangeValue(qBound(0, rv, 3))
 {
-
+    setObjectName("Set Heater Range Request");
 }
 
 QString setHeaterRange::request335()
@@ -118,7 +119,7 @@ setPID::setPID(char ch, double pV, double iV, double dV)
     iVal(qBound(0., iV, 1000.)) ,
     dVal(qBound(0., dV, 200.))
 {
-
+    setObjectName("Set PID Request");
 }
 
 QString setPID::request335()
@@ -146,7 +147,7 @@ QString setPID::process335(QString &setPIDArray)
 setpoint::setpoint(char ch)
     : dialog335Request(ch)
 {
-
+    setObjectName("Setpoint Request");
 }
 
 QString setpoint::request335()
@@ -178,3 +179,8 @@ QString setSetpoint::request335()
             + setpoint::request335() ;
 }
 
+bool dialog335::answerComplete(const QByteArray &a, serialRequest *nextRequest)
+{
+    Q_UNUSED(nextRequest)
+    return a.contains("\r\n") ;
+}

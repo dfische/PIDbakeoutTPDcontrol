@@ -11,6 +11,7 @@ public:
     ~dialogRGA() ;
 private:
     bool init() ;
+    bool answerComplete(const QByteArray &, serialRequest *nextRequest) ;
 
 
 };
@@ -19,13 +20,13 @@ class dialogRGARequest : public serialRequest
 {
     Q_OBJECT
 private:
-
     QByteArray request() ;
     QString process(QByteArray &) ;
 protected:
     virtual QString requestRGA() = 0 ;
     virtual QString processRGA(QString &) = 0 ;
-
+public:
+    bool virtual answerComplete(const QByteArray&) ;
 
 };
 
@@ -38,29 +39,36 @@ public:
     singleMassRequest(int Ma) ;
 private:
     int Mass ;
+    QString process(QByteArray &) ;
+    bool answerComplete(const QByteArray &) ;
 protected:
     int mass() const ;
 };
 
-class startFilament : public dialogRGARequest
+class filamentRequest : public dialogRGARequest
 {
     Q_OBJECT
+private:
+    bool filament ;
 public:
     QString requestRGA() ;
     QString processRGA(QString &) ;
-//    startFilament() ;
+    filamentRequest(bool) ;
 
 };
 
-class stopFilament : public dialogRGARequest
+class CDEMRequest : public dialogRGARequest
 {
     Q_OBJECT
+private:
+    bool CDEM ;
 public:
     QString requestRGA() ;
     QString processRGA(QString &) ;
-    stopFilament() ;
-
+    CDEMRequest(bool) ;
 };
+
+
 
 
 #endif // DIALOGRGA_H

@@ -16,7 +16,7 @@ signals:
 public slots:
     void setTimerInterval(int) ;
 private slots:
-    void toggletimer(bool) ;
+    void toggleTimer(bool) ;
 };
 
 

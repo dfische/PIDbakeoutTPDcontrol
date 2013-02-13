@@ -18,12 +18,12 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>771</width>
-     <height>881</height>
+     <width>751</width>
+     <height>861</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabPID">
     <attribute name="title">
@@ -109,12 +109,8 @@
           <property name="text">
            <string>Start</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="StopPID">
-          <property name="text">
-           <string>Stop</string>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -129,6 +125,13 @@
          <widget class="deviceButton" name="resetPID">
           <property name="text">
            <string>Reset</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="StopPID">
+          <property name="text">
+           <string>Stop</string>
           </property>
          </widget>
         </item>
@@ -431,7 +434,7 @@
        </layout>
       </item>
       <item row="2" column="0" colspan="2">
-       <widget class="QwtPlot" name="PIDPlot">
+       <widget class="trackingPlot" name="PIDPlot">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -453,7 +456,7 @@
     <attribute name="title">
      <string>Bakeout</string>
     </attribute>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget1">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -495,7 +498,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget2">
      <property name="geometry">
       <rect>
        <x>200</x>
@@ -570,7 +573,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget3">
      <property name="geometry">
       <rect>
        <x>450</x>
@@ -596,7 +599,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -643,7 +646,7 @@
     <attribute name="title">
      <string>TPD</string>
     </attribute>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget5">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -664,46 +667,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>620</x>
-       <y>80</y>
-       <width>170</width>
-       <height>34</height>
-      </rect>
-     </property>
-     <layout class="QFormLayout" name="formLayout_7">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_20">
-        <property name="text">
-         <string>Temperature 335</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="temperature335">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_21">
-        <property name="text">
-         <string>Thermocouple</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="temperatureThermocouple">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="deviceButton" name="resetRGA">
      <property name="geometry">
       <rect>
@@ -717,7 +680,7 @@
       <string>Reset</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="CDEMButton" name="startCDEM">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -727,16 +690,16 @@
       </rect>
      </property>
      <property name="text">
-      <string>Calibration</string>
+      <string>CDEM</string>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget6">
      <property name="geometry">
       <rect>
-       <x>650</x>
-       <y>0</y>
-       <width>135</width>
-       <height>76</height>
+       <x>180</x>
+       <y>10</y>
+       <width>102</width>
+       <height>74</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -805,35 +768,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>10</y>
-       <width>166</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_27">
-        <property name="text">
-         <string>Noise Floor (0-7)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="noiseFloorSpinBox">
-        <property name="maximum">
-         <number>7</number>
-        </property>
-        <property name="value">
-         <number>4</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="timerButton" name="startTPD">
      <property name="geometry">
       <rect>
@@ -860,39 +794,7 @@
       <string>Save</string>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>40</y>
-       <width>172</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_28">
-        <property name="text">
-         <string>CDEM Voltage</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="CDEMVoltage">
-        <property name="minimum">
-         <double>10.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>2490.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>1400.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QPushButton" name="startFilament">
+    <widget class="filamentButton" name="startFilament">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -902,15 +804,69 @@
       </rect>
      </property>
      <property name="text">
-      <string>Filament On</string>
+      <string>Filament</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>10</y>
+       <width>152</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>Temperature 335:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="temperature335">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>K</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Thermocouple:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="temperatureThermocouple">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_18">
+        <property name="text">
+         <string>K</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget7">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -923,12 +879,6 @@
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>deviceButton</class>
    <extends>QPushButton</extends>
@@ -944,6 +894,16 @@
    <class>timerButton</class>
    <extends>QPushButton</extends>
    <header>timerbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>filamentButton</class>
+   <extends>QPushButton</extends>
+   <header>filamentbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CDEMButton</class>
+   <extends>QPushButton</extends>
+   <header>cdembutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

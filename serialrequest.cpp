@@ -2,8 +2,8 @@
 #include "serial.h"
 
 serialRequest::serialRequest(QObject* parent, bool singleUse)
-    : single(singleUse),
-      QObject(parent)
+    : QObject(parent),
+      single(singleUse)
 {
     serial *p = qobject_cast<serial*>(parent) ;
     if (p) p->enqueue(this) ;
@@ -12,4 +12,9 @@ serialRequest::serialRequest(QObject* parent, bool singleUse)
 bool serialRequest::singleUse() const
 {
     return single ;
+}
+
+void serialRequest::setSingleUse(bool b)
+{
+    single = b ;
 }
