@@ -9,13 +9,14 @@ dialogRGA::dialogRGA(QObject *parent) :
                           FLOW_HARDWARE,
                           -1), parent)
 {
-    setPortName("COM10") ;
+    setPortName("COM13") ;
     open(ReadWrite) ;
 }
 
 bool dialogRGA::init()
 {
     flush() ;
+    //TO DO IN0 mit einbauen !
     write("ID?\r") ;
     if (!waitForReadyRead(1000))
         return false ;
@@ -153,4 +154,9 @@ bool dialogRGARequest::answerComplete(const QByteArray &a)
 bool singleMassRequest::answerComplete(const QByteArray &a)
 {
     return a.size() >= 4 ;
+}
+
+void singleMassRequest::massChanged(int a)
+{
+    Mass = a ;
 }

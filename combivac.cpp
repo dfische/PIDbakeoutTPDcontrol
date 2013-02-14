@@ -28,8 +28,14 @@ bool combivac::init()
     timeout.start();
     bool success = true ;
     while (!peek(100).contains("1.00\r"))
-        if (timeout.elapsed() > 1000) success = false ;
-    readAll() ;
+    {
+        if (timeout.elapsed() > 1000)
+        {
+            success = false ;
+            break ;
+        }
+    }
+    qDebug() << "combivac init" << readAll() << success ;
     return success ;
 }
 

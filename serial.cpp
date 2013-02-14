@@ -67,7 +67,12 @@ void serial::read()
     if (currentRequest)
     {
         processError(currentRequest->process(data)) ;
-        if (currentRequest->singleUse()) delete currentRequest ;
+        if (currentRequest->singleUse())
+        {   mutex.unlock() ;
+            delete currentRequest ;
+            mutex.lock() ;
+        }
+
         else if (isok()) waiting.enqueue(currentRequest);
     }
     // if requests are pending, continue with the next in line:
@@ -103,10 +108,13 @@ void serial::childEvent(QChildEvent *e)
 void serial::clearError()
 {
     clearQueue();
-    if (!init())
-        processError("Initializing failed") ;
-    else ErrorString.clear() ;
+    mutex.lock() ;
+    bool initsuccess = init() ;
+    mutex.unlock();
+    if (initsuccess) ErrorString.clear() ;
+    else processError("Initializing failed") ;
     // rebuild queue:
+
     buildQueue();
     if (!waiting.isEmpty())
         write(waiting.head()->request()) ;
