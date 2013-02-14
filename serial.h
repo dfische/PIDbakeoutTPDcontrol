@@ -36,6 +36,7 @@ public:
     void enqueue(serialRequest* requestPointer) ;
     bool isok(){return ErrorString.isEmpty();}
     void setMinimumDelay(int msec) ;
+    int minimumDelay() const ;
     void setDebugBufferSize(int items) ;
 protected:
     virtual bool init()=0 ;
@@ -55,7 +56,7 @@ private:
     void clearQueue() ;
     void buildQueue() ;
     void childEvent(QChildEvent *) ;
-    void prepareToWrite() ;
+    void prepareToWrite(bool mandatoryTimer=false) ;
 private slots:
     void read() ;
     void writeNext() ;

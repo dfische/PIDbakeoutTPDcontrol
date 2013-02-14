@@ -12,7 +12,7 @@ trackingPlot::trackingPlot(QWidget *parent) :
 
 void trackingPlot::addyValue(double yValue)
 {
-    addValue(xValue.elapsed()/1000, yValue) ;
+    addValue(xValue.elapsed()/1000., yValue) ;
 }
 
 void trackingPlot::resetEvent()

@@ -53,25 +53,37 @@ serial::~serial()
     delete debugBufferView ;
 }
 
-void serial::prepareToWrite()
+void serial::prepareToWrite(bool mandatoryTimer)
 {
-    if (!writeMutex.tryLock() || delayTime.isActive()) return ;
-    delayTime.start();
-    writeMutex.unlock();
+    if (delayTime.isActive()) return ;
+    if (mandatoryTimer || delayTime.interval())
+        delayTime.start();
+    else writeNext();
 }
 
 void serial::writeNext()
 {
-    if (!writeMutex.tryLock()) delayTime.start();
+    if (!writeMutex.tryLock())
+    {
+        prepareToWrite(true);
+        return ;
+    }
     queueMutex.lock();
-    if (!waiting.isEmpty())
+    if (!waiting.isEmpty() && waiting.head())
         write(waiting.head()->request()) ;
+    else
+        writeMutex.unlock();
     queueMutex.unlock();
 }
 
 void serial::setMinimumDelay(int msec)
 {
     delayTime.setInterval(msec) ;
+}
+
+int serial::minimumDelay() const
+{
+    return delayTime.interval() ;
 }
 
 void serial::enqueue(serialRequest *requestPointer)
