@@ -9,6 +9,7 @@ dialog335::dialog335(QObject *parent) :
                           FLOW_OFF,
                           -1), parent)
 {
+    setObjectName("LakeShore 335 Temperature Controller");
     setPortName("COM12") ;
     open(ReadWrite) ;
 }

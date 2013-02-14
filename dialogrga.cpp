@@ -9,6 +9,7 @@ dialogRGA::dialogRGA(QObject *parent) :
                           FLOW_HARDWARE,
                           -1), parent)
 {
+    setObjectName("SRS RGA 200");
     setPortName("COM13") ;
     open(ReadWrite) ;
 }

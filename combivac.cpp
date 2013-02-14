@@ -10,6 +10,7 @@ combivac::combivac(QObject *parent) :
                           FLOW_OFF,
                           -1),parent)
 {
+    setObjectName("oerlikon Combivac CM52") ;
     setPortName("COM8") ;
     open(ReadWrite) ;
 }
