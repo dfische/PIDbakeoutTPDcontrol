@@ -11,15 +11,25 @@ SOURCES += \
     speczoomer.cpp \
     dialog335.cpp \
     timerbutton.cpp \
+    serialconfigdialog.cpp \
     filamentbutton.cpp \
     cdembutton.cpp \
     generalplot.cpp \
-    xyplot.cpp
-INCLUDEPATH+=C:\\Qwt-6.0.1\\include
+    xyplot.cpp \
+    serialdebugbuffer.cpp
 
-LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib
-
-include(C:/Users/Administrator/Downloads/qextserialport-1.2beta2/src/qextserialport.pri)
+win32 {
+    include(C:/Users/Administrator/Downloads/qextserialport-1.2beta2/src/qextserialport.pri)
+    LIBS+= -lqwtd -LC:\\Qwt-6.0.1\\lib
+    INCLUDEPATH+=C:\\Qwt-6.0.1\\include
+    DEFINES += QT_DLL \
+            QWT_DLL
+}
+unix {
+    include(../qextserialport-1.2beta2/src/qextserialport.pri)
+    LIBS += -lqwt
+    INCLUDEPATH += /usr/include/qwt6
+}
 
 QT += testlib
 
@@ -33,11 +43,14 @@ HEADERS += \
     speczoomer.h \
     dialog335.h \
     timerbutton.h \
+    serialconfigdialog.h \
     filamentbutton.h \
     cdembutton.h \
     massplot.h \
     generalplot.h \
-    xyplot.h
+    xyplot.h \
+    serialdebugbuffer.h
 
 FORMS += \
-    form.ui
+    form.ui \
+    serialconfigdialog.ui
