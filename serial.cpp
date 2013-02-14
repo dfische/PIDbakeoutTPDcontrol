@@ -6,6 +6,8 @@
 #include <QTimer>
 #include "serialdebugbuffer.h"
 #include <QTableView>
+#include <QMenu>
+#include "serialconfigdialog.h""
 
 qint64 serial::write(const QByteArray &data)
 {
@@ -24,6 +26,7 @@ void serial::showDebugBuffer()
 {
     if (debugBuffer && debugBufferView)
     {
+        debugBufferView->setWindowTitle("Message buffer of "+objectName());
         debugBufferView->setModel(debugBuffer);
         debugBufferView->show();
     }
@@ -38,9 +41,8 @@ serial::serial(PortSettings Settings, QObject *parent)
     : QextSerialPort(Settings,EventDriven, parent),
       queueMutex(QMutex::Recursive),
       debugBuffer(new serialDebugBuffer(this)),
-      debugBufferView(0)
+      debugBufferView(new QTableView)
 {
-    debugBufferView = new QTableView ;
     processError("not initialized") ;
     connect(this, SIGNAL(readyRead()), this, SLOT(read())) ;
     delayTime.setSingleShot(true) ;
@@ -98,7 +100,7 @@ void serial::enqueue(serialRequest *requestPointer)
     queueMutex.lock();
     waiting.enqueue(requestPointer) ;
     queueMutex.unlock() ;
-    prepareToWrite();
+    writeNext();
 }
 
 // INVARIANT for communication:  First item in queue has been sent and
@@ -208,7 +210,8 @@ bool serial::waitForReadyRead(int msecs)
 
 deviceButton::deviceButton(QWidget *parent)
     :QPushButton(parent),
-      device(0)
+      device(0),
+      contextMenu(new QMenu("Device options",this))
 {
     connect(this, SIGNAL(clicked()), this, SLOT(resetDevice())) ;
     setButtonColor(Qt::blue);
@@ -216,10 +219,16 @@ deviceButton::deviceButton(QWidget *parent)
 
 void deviceButton::setDevice(serial *dev)
 {
+    contextMenu->clear();
     if (device)
         disconnect(device, SIGNAL(Error(QString)), this, SLOT(errorOccured(QString))) ;
     device = dev ;
-    connect(device, SIGNAL(Error(QString)), this, SLOT(errorOccured(QString))) ;
+    if (device)
+    {
+        connect(device, SIGNAL(Error(QString)), this, SLOT(errorOccured(QString))) ;
+        connect(contextMenu->addAction("Debug viewer"), SIGNAL(triggered()), device, SLOT(showDebugBuffer())) ;
+        connect(contextMenu->addAction("Configure device"), SIGNAL(triggered()), this, SLOT(showConfig())) ;
+    }
 }
 
 void deviceButton::setButtonColor(const QColor& Color)
@@ -248,7 +257,13 @@ void deviceButton::errorOccured(QString S)
 void deviceButton::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::RightButton && e->modifiers() == Qt::NoModifier && device)
-        device->showDebugBuffer();
+        contextMenu->exec(e->globalPos()) ;
     else
         QPushButton::mouseReleaseEvent(e) ;
+}
+
+void deviceButton::showConfig()
+{
+    if (!device) return ;
+    serialConfigDialog(device).exec() ;
 }

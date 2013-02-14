@@ -19,9 +19,11 @@ serialConfigDialog::serialConfigDialog(serial *dev, QWidget *parent)
             ui->baudRate->setCurrentIndex(ui->baudRate->count()-1);
         }
         ui->dataBits->setCurrentIndex(ui->dataBits->findText(QString::number(device->dataBits())));
-        ui->stopBits->setCurrentIndex(ui->stopBits->findText(QString::number(device->stopBits())));
+        ui->stopBits->setCurrentIndex(device->stopBits());
         ui->parity->setCurrentIndex(device->parity()) ; // TODO check if correct
         ui->flowControl->setCurrentIndex(device->flowControl()) ;
+        ui->minDelay->setValue(device->minimumDelay());
+        setWindowTitle("Configuration of "+device->objectName());
     }
 }
 
@@ -56,4 +58,7 @@ void serialConfigDialog::setDevice()
     device->setStopBits(s.StopBits);
     device->setFlowControl(s.FlowControl);
     device->setTimeout(s.Timeout_Millisec);
+    device->setMinimumDelay(ui->minDelay->value());
+    device->close();
+    device->open(serial::ReadWrite) ;
 }

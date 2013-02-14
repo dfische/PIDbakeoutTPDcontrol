@@ -80,11 +80,13 @@ public:
     void setDevice(serial* dev) ;
 private:
     serial* device ;
+    QMenu *contextMenu ;
     void setButtonColor(const QColor & Color) ;
     void mouseReleaseEvent(QMouseEvent *e) ;
 private slots:
     void resetDevice() ;
     void errorOccured(QString S) ;
+    void showConfig() ;
 };
 
 #endif // SERIAL_H
