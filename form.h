@@ -1,7 +1,6 @@
 #ifndef FORM_H
 #define FORM_H
 #include <QTimer>
-
 #include <QWidget>
 #include <QMap>
 
@@ -11,6 +10,8 @@ class dialogRGA ;
 class serialRequest ;
 class QCheckBox ;
 class trackingPlot ;
+class generalPlot ;
+class xyPlot ;
 class QLabel ;
 class serial ;
 class heaterOutputRequest ;
@@ -33,11 +34,11 @@ private:
     QTimer *PIDtimer ;
     heaterOutputRequest *heaterOutputRequest1 ;
     heaterOutputRequest *heaterOutputRequest2;
-
     dialog335 *dl ;
     dialogRGA *rg ;
     QMap<QCheckBox*, serialRequest*> requestMap ;
     serialRequest* initializeRequest(serialRequest*, QLabel *label, trackingPlot *plot, QCheckBox *checkBox) ;
+    serialRequest* initializeDoubleRequest(serialRequest*, serialRequest*, QLabel *, QLabel *, xyPlot *plot, QCheckBox *checkBox) ;
 
 private slots:
     void bakeoutTimerIntervalChanged(int) ;
@@ -51,7 +52,7 @@ private slots:
     void on_heaterRange2_currentIndexChanged(int index);
     void pidValueChanged1() ;
     void pidValueChanged2() ;
-    void getMassValue() ;
+    //void getMassValue() ;
     void checkBoxToggled(bool) ;
 };
 

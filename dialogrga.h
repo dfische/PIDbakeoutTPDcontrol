@@ -37,6 +37,8 @@ public:
     QString requestRGA() ;
     QString processRGA(QString &) ;
     singleMassRequest(int Ma) ;
+public slots:
+    void massChanged(int) ;
 private:
     int Mass ;
     QString process(QByteArray &) ;

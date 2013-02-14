@@ -26,7 +26,7 @@ Form::Form(QWidget *parent) :
 
 
 
-    connect(ui->startTPD, SIGNAL(timeout()), this, SLOT(getMassValue())) ;
+    //connect(ui->startTPD, SIGNAL(timeout()), this, SLOT(getMassValue())) ;
 
 
 
@@ -56,8 +56,30 @@ Form::Form(QWidget *parent) :
 
     initializeRequest(new pressureRequest(1), ui->pressureCombi1, ui->pressurePlot1, ui->combi1CheckBox) ;
     initializeRequest(new pressureRequest(2), ui->pressureCombi2, ui->pressurePlot2, ui->combi2CheckBox) ;
-    initializeRequest(new temperatureRequest('A'), ui->tempValueA, ui->PIDPlot, ui->plotTemperatureA) ;
+    initializeRequest(new pressureRequest(3), ui->pressureIonGauge, ui->ionGaugePlot, ui->ionGaugeCheckBox) ;
+    serialRequest *temperaturAbfrage = initializeRequest(new temperatureRequest('A'), ui->tempValueA, ui->PIDPlot, ui->plotTemperatureA) ;
     initializeRequest(new temperatureRequest('B'), ui->tempValueB, ui->PIDPlot, ui->plotTemperatureB) ;
+
+
+    singleMassRequest *masseAbfrage1 = new singleMassRequest(ui->TPDMass1->value()) ;
+    initializeRequest(masseAbfrage1, ui->mass1Label, 0, ui->mass1CheckBox) ;
+    singleMassRequest *masseAbfrage2 = new singleMassRequest(ui->TPDMass2->value()) ;
+    initializeRequest(masseAbfrage2, ui->mass2Label, 0, ui->mass2CheckBox) ;
+    singleMassRequest *masseAbfrage3 = new singleMassRequest(ui->TPDMass3->value());
+    initializeRequest(masseAbfrage3, ui->mass3Label, 0, ui->mass3CheckBox) ;
+
+    connect(temperaturAbfrage, SIGNAL(numericvalue(double)), ui->TPDmass1Plot, SLOT(addxValue(double))) ;
+    connect(temperaturAbfrage, SIGNAL(numericvalue(double)), ui->TPDmass2Plot, SLOT(addxValue(double))) ;
+    connect(temperaturAbfrage, SIGNAL(numericvalue(double)), ui->TPDmass3Plot, SLOT(addxValue(double))) ;
+
+    connect(masseAbfrage1, SIGNAL(numericvalue(double)), ui->TPDmass1Plot, SLOT(addyValue(double))) ;
+    connect(masseAbfrage2, SIGNAL(numericvalue(double)), ui->TPDmass2Plot, SLOT(addyValue(double))) ;
+    connect(masseAbfrage3, SIGNAL(numericvalue(double)), ui->TPDmass3Plot, SLOT(addyValue(double))) ;
+    connect(ui->TPDMass1, SIGNAL(valueChanged(int)), masseAbfrage1, SLOT(massChanged(int))) ;
+    connect(ui->TPDMass2, SIGNAL(valueChanged(int)), masseAbfrage2, SLOT(massChanged(int))) ;
+    connect(ui->TPDMass3, SIGNAL(valueChanged(int)), masseAbfrage3, SLOT(massChanged(int))) ;
+
+
 }
 
 void Form::heaterOutput(bool a)
@@ -74,22 +96,22 @@ void Form::heaterOutput(bool a)
     }
 }
 
-void Form::getMassValue()
-{
-    singleMassRequest* mass = 0 ;
-#define MASSREQUESTMACRO(CHECKBOX, LABEL, SPINBOX, PLOT) \
-    if(ui->CHECKBOX->isChecked()) \
-{    \
-    mass = new singleMassRequest(ui->SPINBOX->value()) ; \
-    connect(mass, SIGNAL(numericvalue(double)), ui->LABEL, SLOT(setNum(double))) ; \
-    connect(mass, SIGNAL(numericvalue(double)), ui->PLOT, SLOT(addValue(double))) ; \
-    rg->enqueue(mass) ; \
-}
-    MASSREQUESTMACRO(mass1CheckBox, mass1Label, TPDMass1, TPDmass1Plot) ;
-    MASSREQUESTMACRO(mass2CheckBox, mass2Label, TPDMass2, TPDmass2Plot) ;
-    MASSREQUESTMACRO(mass3CheckBox, mass3Label, TPDMass3, TPDmass3Plot) ;
+//void Form::getMassValue()
+//{
+//    singleMassRequest* mass = 0 ;
+//#define MASSREQUESTMACRO(CHECKBOX, LABEL, SPINBOX, PLOT) \
+//    if(ui->CHECKBOX->isChecked()) \
+//{    \
+//    mass = new singleMassRequest(ui->SPINBOX->value()) ; \
+//    connect(mass, SIGNAL(numericvalue(double)), ui->LABEL, SLOT(setNum(double))) ; \
+//    connect(mass, SIGNAL(numericvalue(double)), ui->PLOT, SLOT(addValue(double))) ; \
+//    rg->enqueue(mass) ; \
+//}
+//    MASSREQUESTMACRO(mass1CheckBox, mass1Label, TPDMass1, TPDmass1Plot) ;
+//    MASSREQUESTMACRO(mass2CheckBox, mass2Label, TPDMass2, TPDmass2Plot) ;
+//    MASSREQUESTMACRO(mass3CheckBox, mass3Label, TPDMass3, TPDmass3Plot) ;
 
-}
+//}
 
 //void Form::PIDtimerIntervalChanged(int b)
 //{
@@ -127,12 +149,14 @@ serialRequest* Form::initializeRequest(serialRequest *request, QLabel *label, tr
         connect(request, SIGNAL(numericvalue(int)), label, SLOT(setNum(int))) ;
     }
     if (plot)
-        connect(request, SIGNAL(numericvalue(double)), plot, SLOT(addValue(double))) ;
+        connect(request, SIGNAL(numericvalue(double)), plot, SLOT(addyValue(double))) ;
 //    connect(request, SIGNAL(destroyed()), this, SLOT(requestDeleted())) ;
     requestMap[checkBox] = request ;
     request->setSingleUse(false) ;
     return request ;
 }
+
+
 
 /*void Form::requestDeleted()
 {

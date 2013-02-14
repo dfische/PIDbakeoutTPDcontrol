@@ -4,34 +4,31 @@
 #include <QPointF>
 #include <QVector>
 #include <QTime>
+#include "generalplot.h"
 
 class QMenu ;
 class QwtPlotCurve ;
 class specZoomer ;
 
-class trackingPlot : public QwtPlot
+class trackingPlot : public generalPlot
 {
     Q_OBJECT
 public:
     explicit trackingPlot(QWidget *parent = 0);
+
 private:
     QVector<QPointF> data ;
     QTime xValue ;
-    QwtPlotCurve *curve ;
-    void contextMenuEvent(QContextMenuEvent *) ;
-    QMenu *contextMenu ;
-    void refresh() ;
-    specZoomer *getZoomer() ;
-    QString generateTextData() const ;
+    void resetEvent() ;
+
+
 signals:
+
 private slots:
-    void resetPlot() ;
-    void savePlot() ;
-    void copyData() ;
 
 public slots:
-    void addValue(double yValue) ;
-   // void addmassValue(double , double) ;
+    void addyValue(double yValue) ;
+
 };
 
 #endif // TRACKINGPLOT_H
